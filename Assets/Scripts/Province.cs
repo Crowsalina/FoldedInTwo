@@ -9,7 +9,7 @@ namespace Crowsalina
     {
         public string provinceName;
         public int startingPower;
-        public bool isWater, isCoastal, isSupply;
-        public List<Province> adjacentProvinces;
+        public bool isMaritime, isCoastal, isSupply, isFleetOnly;
+        public List<Province> adjacentProvinces, childProvinces;
     }
 }

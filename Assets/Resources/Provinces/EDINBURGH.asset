@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
-  m_Name: LONDON
+  m_Name: EDINBURGH
   m_EditorClassIdentifier: 
-  provinceName: LON
+  provinceName: EDI
   startingPower: 1
   isMaritime: 0
   isCoastal: 1
   isSupply: 1
   adjacentProvinces:
-  - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
-  - {fileID: 11400000, guid: 1976d049646f0a340b214df4497927ed, type: 2}
-  - {fileID: 11400000, guid: 9a1b8bfe84172204eac71bff55ed5c61, type: 2}
+  - {fileID: 11400000, guid: f7acdd42a9141ab4186ffd68b76129d2, type: 2}
+  - {fileID: 11400000, guid: 96061005df8179c47816bd35d1092603, type: 2}
   - {fileID: 11400000, guid: 720da7b7a6ae75241bbee7ca33630fd0, type: 2}
+  - {fileID: 11400000, guid: 2067ce75f77278d4a965f0d68565efb4, type: 2}
+  - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}

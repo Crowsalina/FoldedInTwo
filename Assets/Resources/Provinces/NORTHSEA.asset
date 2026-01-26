@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: NORTHSEA
+  m_EditorClassIdentifier: 
+  provinceName: NTH
+  startingPower: 0
+  isMaritime: 1
+  isCoastal: 0
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: e174a6eeaa7e9464cbdd07b9562196d2, type: 2}
+  - {fileID: 11400000, guid: 4c9a2295b336b814fa52e37b97eda479, type: 2}
+  - {fileID: 11400000, guid: 9a1b8bfe84172204eac71bff55ed5c61, type: 2}
+  - {fileID: 11400000, guid: 71329ca902129264fafeeb10824a8fc9, type: 2}
+  - {fileID: 11400000, guid: 2067ce75f77278d4a965f0d68565efb4, type: 2}
+  - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

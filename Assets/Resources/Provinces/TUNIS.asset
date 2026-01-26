@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
-  m_Name: LONDON
+  m_Name: TUNIS
   m_EditorClassIdentifier: 
-  provinceName: LON
-  startingPower: 1
+  provinceName: TUN
+  startingPower: 0
   isMaritime: 0
   isCoastal: 1
-  isSupply: 1
+  isSupply: 0
   adjacentProvinces:
-  - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
-  - {fileID: 11400000, guid: 1976d049646f0a340b214df4497927ed, type: 2}
-  - {fileID: 11400000, guid: 9a1b8bfe84172204eac71bff55ed5c61, type: 2}
-  - {fileID: 11400000, guid: 720da7b7a6ae75241bbee7ca33630fd0, type: 2}
+  - {fileID: 11400000, guid: a648fce71e374a249a3a5e92d55589bf, type: 2}
+  - {fileID: 11400000, guid: dc227aecd4a0dd94aaf9c17eccb94b89, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
