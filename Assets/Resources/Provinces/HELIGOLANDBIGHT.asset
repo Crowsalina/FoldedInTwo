@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: HELIGOLANDBIGHT
+  m_EditorClassIdentifier: 
+  provinceName: HEL
+  startingPower: 0
+  isMaritime: 1
+  isCoastal: 0
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 720da7b7a6ae75241bbee7ca33630fd0, type: 2}
+  - {fileID: 11400000, guid: 09027e81b06c4644fbfc74752452c791, type: 2}
+  - {fileID: 11400000, guid: 8803a9830fb289c45a7971ac966b6b52, type: 2}
+  - {fileID: 11400000, guid: 4d18d29105584a24b9ba7e5efbcc59a8, type: 2}
+  childProvinces: []

@@ -22,7 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 013622e317d749e4ba82ca64112670ba, type: 2}
   - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}
   - {fileID: 11400000, guid: a648fce71e374a249a3a5e92d55589bf, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 72a80fbe840d3af42b8d518f7611fcd5, type: 2}
+  - {fileID: 11400000, guid: d534064545248f245a69061c9c7b2250, type: 2}
+  - {fileID: 11400000, guid: 159e6c91308604e4ab84b225cd4e0a27, type: 2}
   childProvinces: []

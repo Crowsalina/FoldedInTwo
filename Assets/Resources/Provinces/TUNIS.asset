@@ -16,9 +16,11 @@ MonoBehaviour:
   startingPower: 0
   isMaritime: 0
   isCoastal: 1
-  isSupply: 0
+  isSupply: 1
+  isFleetOnly: 0
   adjacentProvinces:
   - {fileID: 11400000, guid: a648fce71e374a249a3a5e92d55589bf, type: 2}
   - {fileID: 11400000, guid: dc227aecd4a0dd94aaf9c17eccb94b89, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 159e6c91308604e4ab84b225cd4e0a27, type: 2}
+  - {fileID: 11400000, guid: ab436923eab06114a9ab4f524e7d6091, type: 2}
+  childProvinces: []

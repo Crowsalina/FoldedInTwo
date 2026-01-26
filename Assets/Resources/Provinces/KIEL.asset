@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: KIEL
+  m_EditorClassIdentifier: 
+  provinceName: KIE
+  startingPower: 3
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: cbf6d157b54e5e841a9d6acb9b19d5b1, type: 2}
+  - {fileID: 11400000, guid: 3c259665bd2cb324da2f33ac55820daa, type: 2}
+  - {fileID: 11400000, guid: 09027e81b06c4644fbfc74752452c791, type: 2}
+  - {fileID: 11400000, guid: c70e1a46ce15e80458de7b73b37d8ba8, type: 2}
+  - {fileID: 11400000, guid: c4c2dbd149e65fa4280fe77421760274, type: 2}
+  - {fileID: 11400000, guid: ff363b835d29e014c934c8937d3ea66e, type: 2}
+  - {fileID: 11400000, guid: 4d18d29105584a24b9ba7e5efbcc59a8, type: 2}
+  childProvinces: []

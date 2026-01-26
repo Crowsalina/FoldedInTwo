@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: SMYRNA
+  m_EditorClassIdentifier: 
+  provinceName: SMY
+  startingPower: 7
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: d6ada75fe714b4942b5379a27efc32e1, type: 2}
+  - {fileID: 11400000, guid: 915bfe7bd3920d1448128c95fd11d328, type: 2}
+  - {fileID: 11400000, guid: 391fe0f409dfc60438ce77b6766ec74a, type: 2}
+  - {fileID: 11400000, guid: 97029750cdaeb1f45a383bb9d549c6fd, type: 2}
+  - {fileID: 11400000, guid: 108fe221ab77f8f41b42b1f84cd2801a, type: 2}
+  - {fileID: 11400000, guid: 64b81a434b367e741bffccb336716a42, type: 2}
+  childProvinces: []

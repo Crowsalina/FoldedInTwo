@@ -24,5 +24,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4750bbd125e651e41bb526b662ecbac9, type: 2}
   - {fileID: 11400000, guid: d2ed0e4884ccbcb4a938ef3b57b3bf56, type: 2}
   - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: d534064545248f245a69061c9c7b2250, type: 2}
   childProvinces: []

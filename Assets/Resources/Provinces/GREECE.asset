@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: GREECE
+  m_EditorClassIdentifier: 
+  provinceName: GRE
+  startingPower: 0
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: d6ada75fe714b4942b5379a27efc32e1, type: 2}
+  - {fileID: 11400000, guid: ab436923eab06114a9ab4f524e7d6091, type: 2}
+  - {fileID: 11400000, guid: 62d979a9bb294294d87b1cf636339a53, type: 2}
+  - {fileID: 11400000, guid: 864c2b0f66663d84e8b058ca47fc17ae, type: 2}
+  - {fileID: 11400000, guid: 83c789a1ccbba434b8f20add311b85bd, type: 2}
+  - {fileID: 11400000, guid: 52f26ab90fa3f3b4a8b58161d0ff07fc, type: 2}
+  childProvinces: []

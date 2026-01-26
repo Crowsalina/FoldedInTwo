@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: STPETERSBURG
+  m_EditorClassIdentifier: 
+  provinceName: STP
+  startingPower: 6
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 5c2ebbda0fe3beb489e59aa1e3992fcf, type: 2}
+  - {fileID: 11400000, guid: 2bc2c0c58b91e7f4aab3ae77e55cb3dc, type: 2}
+  - {fileID: 11400000, guid: 2362108d5ca293047a710011bb9a008b, type: 2}
+  - {fileID: 11400000, guid: 806eb3993436f654db40163025765139, type: 2}
+  - {fileID: 11400000, guid: a61b5b053768dbc4d84d2286758d49d0, type: 2}
+  childProvinces:
+  - {fileID: 11400000, guid: cc7a1637247ed41458679a4dfe7e0920, type: 2}
+  - {fileID: 11400000, guid: 1c6727da79644874e830d69a89ed45e1, type: 2}

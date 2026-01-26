@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: BARENTSSEA
+  m_EditorClassIdentifier: 
+  provinceName: BAR
+  startingPower: 0
+  isMaritime: 1
+  isCoastal: 0
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 82e269b9b28a0e542a074dae5d3eb43e, type: 2}
+  - {fileID: 11400000, guid: b75f02af470aa0e4aaa4d1e1fce3cdbd, type: 2}
+  - {fileID: 11400000, guid: cc7a1637247ed41458679a4dfe7e0920, type: 2}
+  childProvinces: []

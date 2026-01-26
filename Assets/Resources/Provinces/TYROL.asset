@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: TYROL
+  m_EditorClassIdentifier: 
+  provinceName: TYR
+  startingPower: 5
+  isMaritime: 0
+  isCoastal: 0
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: ff363b835d29e014c934c8937d3ea66e, type: 2}
+  - {fileID: 11400000, guid: e61153782c2a1804982d1e72d1277d80, type: 2}
+  - {fileID: 11400000, guid: 359428f9223fb9143961b17277a3b954, type: 2}
+  - {fileID: 11400000, guid: e95fe4b392405dc4faa6a15ca2bd5cf2, type: 2}
+  - {fileID: 11400000, guid: a7268e637ceda5741a7a85c775e438ac, type: 2}
+  - {fileID: 11400000, guid: d534064545248f245a69061c9c7b2250, type: 2}
+  childProvinces: []

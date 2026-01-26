@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: CONSTANTINOPLE
+  m_EditorClassIdentifier: 
+  provinceName: CON
+  startingPower: 7
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 83c789a1ccbba434b8f20add311b85bd, type: 2}
+  - {fileID: 11400000, guid: 39b81827db98b3b4283f382e98a9e050, type: 2}
+  - {fileID: 11400000, guid: 52f26ab90fa3f3b4a8b58161d0ff07fc, type: 2}
+  - {fileID: 11400000, guid: 3025d2cb65d5e2d4d92d702c35e37595, type: 2}
+  - {fileID: 11400000, guid: d3e6606ede1ff3d40abfe497081a5650, type: 2}
+  - {fileID: 11400000, guid: 108fe221ab77f8f41b42b1f84cd2801a, type: 2}
+  - {fileID: 11400000, guid: d6ada75fe714b4942b5379a27efc32e1, type: 2}
+  - {fileID: 11400000, guid: 391fe0f409dfc60438ce77b6766ec74a, type: 2}
+  childProvinces: []

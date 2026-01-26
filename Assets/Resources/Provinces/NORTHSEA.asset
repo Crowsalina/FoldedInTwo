@@ -25,8 +25,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 71329ca902129264fafeeb10824a8fc9, type: 2}
   - {fileID: 11400000, guid: 2067ce75f77278d4a965f0d68565efb4, type: 2}
   - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 82e269b9b28a0e542a074dae5d3eb43e, type: 2}
+  - {fileID: 11400000, guid: b9f68ec653aae5b448ccc40c3eb7ca67, type: 2}
+  - {fileID: 11400000, guid: 09027e81b06c4644fbfc74752452c791, type: 2}
+  - {fileID: 11400000, guid: c70e1a46ce15e80458de7b73b37d8ba8, type: 2}
+  - {fileID: 11400000, guid: 4d18d29105584a24b9ba7e5efbcc59a8, type: 2}
+  childProvinces: []

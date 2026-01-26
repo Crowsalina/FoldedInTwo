@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: BALTICSEA
+  m_EditorClassIdentifier: 
+  provinceName: BAL
+  startingPower: 0
+  isMaritime: 1
+  isCoastal: 0
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 191cbad4314ddfb4591a372e798f35fe, type: 2}
+  - {fileID: 11400000, guid: bb970e4271726b047a14da76cccae898, type: 2}
+  - {fileID: 11400000, guid: 3c259665bd2cb324da2f33ac55820daa, type: 2}
+  - {fileID: 11400000, guid: 8803a9830fb289c45a7971ac966b6b52, type: 2}
+  - {fileID: 11400000, guid: 09027e81b06c4644fbfc74752452c791, type: 2}
+  - {fileID: 11400000, guid: 2bc2c0c58b91e7f4aab3ae77e55cb3dc, type: 2}
+  - {fileID: 11400000, guid: 2362108d5ca293047a710011bb9a008b, type: 2}
+  childProvinces: []

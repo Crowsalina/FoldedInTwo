@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: FINLAND
+  m_EditorClassIdentifier: 
+  provinceName: FIN
+  startingPower: 6
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 0
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 191cbad4314ddfb4591a372e798f35fe, type: 2}
+  - {fileID: 11400000, guid: 82e269b9b28a0e542a074dae5d3eb43e, type: 2}
+  - {fileID: 11400000, guid: 2362108d5ca293047a710011bb9a008b, type: 2}
+  - {fileID: 11400000, guid: b75f02af470aa0e4aaa4d1e1fce3cdbd, type: 2}
+  - {fileID: 11400000, guid: 1c6727da79644874e830d69a89ed45e1, type: 2}
+  childProvinces: []

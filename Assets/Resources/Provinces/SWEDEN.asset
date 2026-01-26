@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: SWEDEN
+  m_EditorClassIdentifier: 
+  provinceName: SWE
+  startingPower: 0
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: 82e269b9b28a0e542a074dae5d3eb43e, type: 2}
+  - {fileID: 11400000, guid: b9f68ec653aae5b448ccc40c3eb7ca67, type: 2}
+  - {fileID: 11400000, guid: 09027e81b06c4644fbfc74752452c791, type: 2}
+  - {fileID: 11400000, guid: cbf6d157b54e5e841a9d6acb9b19d5b1, type: 2}
+  - {fileID: 11400000, guid: 2362108d5ca293047a710011bb9a008b, type: 2}
+  - {fileID: 11400000, guid: 806eb3993436f654db40163025765139, type: 2}
+  childProvinces: []

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
+  m_Name: RUMANIA
+  m_EditorClassIdentifier: 
+  provinceName: RUM
+  startingPower: 0
+  isMaritime: 0
+  isCoastal: 1
+  isSupply: 1
+  isFleetOnly: 0
+  adjacentProvinces:
+  - {fileID: 11400000, guid: b5e84e733fc970143ab5ac75ead94ee6, type: 2}
+  - {fileID: 11400000, guid: e44b5ddf50c5d9f45aff35df5c36ab58, type: 2}
+  - {fileID: 11400000, guid: 864c2b0f66663d84e8b058ca47fc17ae, type: 2}
+  - {fileID: 11400000, guid: 83c789a1ccbba434b8f20add311b85bd, type: 2}
+  - {fileID: 11400000, guid: 39b81827db98b3b4283f382e98a9e050, type: 2}
+  - {fileID: 11400000, guid: 3025d2cb65d5e2d4d92d702c35e37595, type: 2}
+  - {fileID: 11400000, guid: 87d317cf5fb44a7409d963ffcf331834, type: 2}
+  - {fileID: 11400000, guid: fa84cc94b15202b48bd7b821e3b64f06, type: 2}
+  childProvinces: []
