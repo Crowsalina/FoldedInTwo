@@ -292,13 +292,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.15
-  m_fontSizeBase: 42.15
+  m_fontSize: 41.35
+  m_fontSizeBase: 41.35
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 1169263019320522759}
   - component: {fileID: 7504138895126951957}
   - component: {fileID: 5116584738700408630}
+  - component: {fileID: -4912643423168019099}
   m_Layer: 0
   m_Name: ProvincePrefab
   m_TagString: Untagged
@@ -438,8 +439,8 @@ RectTransform:
   m_GameObject: {fileID: 4388139084086873652}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3907885419594886311}
   m_Father: {fileID: 0}
@@ -567,6 +568,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-4912643423168019099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4388139084086873652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceff88528582bd543b149e9ddbb0acfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canButtonBePressed: 0
+  hasRequestedMovement: 0
 --- !u!1 &5858312009734485096
 GameObject:
   m_ObjectHideFlags: 0

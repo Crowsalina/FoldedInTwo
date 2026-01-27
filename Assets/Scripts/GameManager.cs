@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int round, playerHealth, enemyHealth, playerDeckSize, enemyDeckSize, playerMaxPower, enemyMaxPower, playerCurrentPower, enemyCurrentPower;
+    public int round, playerHealth, provinceHealth, playerDeckSize, provinceDeckSize, playerMaxPower, provinceMaxPower, playerCurrentPower, provinceCurrentPower;
     public float roundTime;
     public bool canPlayerInput;
+    public ProvinceSpawningManager provinceManager;
     public static GameManager Instance
     {
         get
@@ -31,14 +32,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         roundTime = 60f;
-        round = 0; 
+        round = 0;
+        provinceManager.SpawnAllProvinces();
     }
 
     public void RoundEnd()
     {
         round += 1;
-        StopCoroutine(RoundTimer());
-        StartCoroutine(RoundTimer());
+        //StopCoroutine(RoundTimer());
+        //StartCoroutine(RoundTimer());
     }
 
     IEnumerator RoundTimer()
