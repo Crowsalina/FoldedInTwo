@@ -4,58 +4,89 @@ using UnityEngine;
 public class ProvinceButtonManager : MonoBehaviour
 {
     private ProvinceStats provinceStats;
-    private GlobalMovementVariables GMV;
-    public bool canButtonBePressed, hasRequestedMovement, isCurrentMovementSupported;
+    public bool canButtonBePressed, hasRequestedMovement, isCurrentMovementSupported, isProvinceClicked;
     public GameObject destinationProvince, supportingProvince;
+    private OrderManager orderManager;
+    private LocalOrderHandler localOrderHandler;
     
     private void Awake()
     {
         provinceStats = gameObject.GetComponent<ProvinceStats>();
-        GMV = FindFirstObjectByType<GlobalMovementVariables>();
+        orderManager = FindFirstObjectByType<OrderManager>();
+        localOrderHandler = FindFirstObjectByType<LocalOrderHandler>();
+        isProvinceClicked = false;
     }
     public void ButtonPressed()
     {
         if (canButtonBePressed)
         {
-            if (GMV.hasMovementStarted)
+            if (isProvinceClicked && !localOrderHandler.isSupportOrderActive)
             {
-                GMV.OriginProvince.GetComponent<ProvinceButtonManager>().SetDestinationProvince(this.gameObject);
+                HoldOrder();
+                isProvinceClicked = false;
+            }
+            else if (isProvinceClicked && localOrderHandler.isSupportOrderActive)
+            {
+                localOrderHandler.TrackProvinceSupport(this.gameObject);
+                isProvinceClicked = false;
             }
             else
             {
-                if (provinceStats.hasArmy)
+                if (localOrderHandler.isMovementOpen && !localOrderHandler.isConvoyOrderActive && !localOrderHandler.isSupportOrderActive)
                 {
-                    GMV.RequestMove(this.gameObject, 0);
-                    hasRequestedMovement = true;
+                    localOrderHandler.TrackProvinceMove(this.gameObject);
+                    isProvinceClicked = false;
                 }
-                else if (provinceStats.hasFleet)
+                else if (localOrderHandler.isMovementOpen && localOrderHandler.isConvoyOrderActive)
                 {
-                    GMV.RequestMove(this.gameObject, 1);
-                    hasRequestedMovement = true;
+                    localOrderHandler.TrackProvinceConvoy(this.gameObject);
+                }
+                else if (localOrderHandler.isMovementOpen && localOrderHandler.isSupportOrderActive)
+                {
+                    localOrderHandler.TrackProvinceSupportMove(this.gameObject);
+                }
+                else
+                {
+                    isProvinceClicked = true;
+                    localOrderHandler.TrackOriginProvince(this.gameObject);
+                    OrderOptions();
                 }
             }
-            if (hasRequestedMovement)
+        }
+    }
+    public void OrderOptions()
+    {
+        localOrderHandler.isMovementOpen = true;
+        while (isProvinceClicked)
+        {
+            if (Input.GetKeyDown(KeyCode.S))
             {
-                GMV.CancelMove(this.gameObject);
-                hasRequestedMovement = false;
+                SupportOrder();
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            { 
+                ConvoyOrder();
             }
         }
     }
-    public void SetDestinationProvince(GameObject destProvince)
+    public void HoldOrder()
     {
-        destinationProvince = destProvince;
+        orderManager.AddHoldOrder(this.gameObject);
     }
-    public void SendUnit()
+    public void SupportOrder()
     {
-        if (provinceStats.hasArmy)
+        if (localOrderHandler.isConvoyOrderActive)
         {
-            destinationProvince.GetComponent<ProvinceStats>().hasArmy = true;
-            provinceStats.hasArmy = false;
+            localOrderHandler.isConvoyOrderActive = false;
         }
-        else if (provinceStats.hasFleet)
+        localOrderHandler.isSupportOrderActive = true;
+    }
+    public void ConvoyOrder()
+    {
+        if (localOrderHandler.isSupportOrderActive)
         {
-            destinationProvince.GetComponent<ProvinceStats>().hasFleet = true;
-            provinceStats.hasFleet = false;
+            localOrderHandler.isSupportOrderActive = false;
         }
+        localOrderHandler.isConvoyOrderActive = true;
     }
 }
