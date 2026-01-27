@@ -31,15 +31,23 @@ public class LocalOrderHandler : MonoBehaviour
         {
             currentTargetProvince = province;
         }
-        else if (currentDestProvince == null)
+        else
         {
             orderManager.AddSupportMoveOrder(currentOriginProvince, currentTargetProvince, province);
             ClearTracking();
         }
     }
     public void TrackProvinceConvoy(GameObject province)
-    { 
-        
+    {
+        if (currentTargetProvince == null)
+        {
+            currentTargetProvince = province;
+        }
+        else
+        {
+            orderManager.AddConvoyOrder(currentOriginProvince, currentTargetProvince, province);
+            ClearTracking();
+        }
     }
     public void TrackOriginProvince(GameObject province)
     { 

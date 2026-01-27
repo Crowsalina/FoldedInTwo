@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
   m_Name: BULGARIASC
   m_EditorClassIdentifier: 
-  provinceName: BUL
+  provinceName: BUL/sc
   startingPower: 0
   isMaritime: 0
   isCoastal: 1

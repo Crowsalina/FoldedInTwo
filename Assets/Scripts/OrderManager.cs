@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 public class OrderManager : MonoBehaviour
 {
-    List<GameObject> MoveOriginList = new List<GameObject>();
-    List<GameObject> MoveDestList = new List<GameObject>();
-    List<GameObject> HoldList = new List<GameObject>();
-    List<GameObject> SupportMoveOriginList = new List<GameObject>();
-    List<GameObject> SupportMoveTargetList = new List<GameObject>();
-    List<GameObject> SupportOriginList = new List<GameObject>();
-    List<GameObject> SupportTargetList = new List<GameObject>();
-    List<GameObject> SupportMoveDestList = new List<GameObject>();
-    List<GameObject> ConvoyOriginList = new List<GameObject>();
-    List<GameObject> ConvoyTargetList = new List<GameObject>();
-    List<GameObject> ConvoyDestList = new List<GameObject>();
+    public List<GameObject> MoveOriginList = new List<GameObject>();
+    public List<GameObject> MoveDestList = new List<GameObject>();
+    public List<GameObject> HoldList = new List<GameObject>();
+    public List<GameObject> SupportMoveOriginList = new List<GameObject>();
+    public List<GameObject> SupportMoveTargetList = new List<GameObject>();
+    public List<GameObject> SupportOriginList = new List<GameObject>();
+    public List<GameObject> SupportTargetList = new List<GameObject>();
+    public List<GameObject> SupportMoveDestList = new List<GameObject>();
+    public List<GameObject> ConvoyOriginList = new List<GameObject>();
+    public List<GameObject> ConvoyTargetList = new List<GameObject>();
+    public List<GameObject> ConvoyDestList = new List<GameObject>();
     public void AddHoldOrder(GameObject originProvince)
     { 
         HoldList.Add(originProvince);

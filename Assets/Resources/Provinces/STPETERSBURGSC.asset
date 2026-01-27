@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
   m_Name: STPETERSBURGSC
   m_EditorClassIdentifier: 
-  provinceName: STP
+  provinceName: STP/sc
   startingPower: 6
   isMaritime: 0
   isCoastal: 1

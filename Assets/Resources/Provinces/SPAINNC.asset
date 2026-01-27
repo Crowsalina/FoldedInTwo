@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
   m_Name: SPAINNC
   m_EditorClassIdentifier: 
-  provinceName: SPA
+  provinceName: SPA/nc
   startingPower: 0
   isMaritime: 0
   isCoastal: 1
