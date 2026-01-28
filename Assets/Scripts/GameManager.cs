@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public int round;
     public bool canPlayerInput;
     public ProvinceSpawningManager provinceManager;
-    public OrderTextParser orderTextParser;
+    public OrderParser orderTextParser;
     public static GameManager Instance
     {
         get

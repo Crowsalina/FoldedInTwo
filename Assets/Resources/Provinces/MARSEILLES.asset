@@ -15,7 +15,7 @@ MonoBehaviour:
   provinceName: MAR
   startingPower: 2
   isMaritime: 0
-  isCoastal: 0
+  isCoastal: 1
   isSupply: 1
   isFleetOnly: 0
   hasStartingArmy: 1
@@ -28,3 +28,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}
   - {fileID: 11400000, guid: d534064545248f245a69061c9c7b2250, type: 2}
   childProvinces: []
+  coastlineAdjacentProvinces:
+  - {fileID: 11400000, guid: d534064545248f245a69061c9c7b2250, type: 2}
+  - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}

@@ -30,3 +30,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d6ada75fe714b4942b5379a27efc32e1, type: 2}
   - {fileID: 11400000, guid: 391fe0f409dfc60438ce77b6766ec74a, type: 2}
   childProvinces: []
+  coastlineAdjacentProvinces:
+  - {fileID: 11400000, guid: 39b81827db98b3b4283f382e98a9e050, type: 2}
+  - {fileID: 11400000, guid: 52f26ab90fa3f3b4a8b58161d0ff07fc, type: 2}
+  - {fileID: 11400000, guid: d3e6606ede1ff3d40abfe497081a5650, type: 2}
+  - {fileID: 11400000, guid: 391fe0f409dfc60438ce77b6766ec74a, type: 2}

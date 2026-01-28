@@ -26,3 +26,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9a1b8bfe84172204eac71bff55ed5c61, type: 2}
   - {fileID: 11400000, guid: 720da7b7a6ae75241bbee7ca33630fd0, type: 2}
   childProvinces: []
+  coastlineAdjacentProvinces:
+  - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
+  - {fileID: 11400000, guid: 1976d049646f0a340b214df4497927ed, type: 2}

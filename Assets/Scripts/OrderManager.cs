@@ -66,5 +66,6 @@ public class OrderManager : MonoBehaviour
         ConvoyTargetList.TrimExcess();
         ConvoyDestList.Clear();
         ConvoyDestList.TrimExcess();
+        Debug.Log("Cleared Last Orders");
     }
 }

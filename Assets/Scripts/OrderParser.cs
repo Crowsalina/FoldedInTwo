@@ -2,7 +2,7 @@ using Crowsalina;
 using System.Collections;
 using UnityEngine;
 
-public class OrderTextParser : MonoBehaviour
+public class OrderParser : MonoBehaviour
 {
     private OrderManager orderManager;
     private ProvinceStats currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats;
@@ -33,20 +33,14 @@ public class OrderTextParser : MonoBehaviour
         {
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.HoldList[i].GetComponent<ProvinceStats>();
-            Debug.Log(currentOriginProvinceStats.provinceData.provinceName.ToString());
-            if (currentOriginProvinceStats.hasArmy)
+            if (HasUnit(currentOriginProvinceStats))
             {
-                currentUnitType = "A";
-            }
-            else if (currentOriginProvinceStats.hasFleet)
-            {
-                currentUnitType = "F";
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " H");
             }
             else
             {
                 continue;
             }
-            Debug.Log(currentUnitType +" "+ currentOriginProvinceStats.provinceData.provinceName + " H");
         }
         hasParsedHolds = true;
     }
@@ -58,20 +52,14 @@ public class OrderTextParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.MoveOriginList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.MoveDestList[i].GetComponent<ProvinceStats>();
-            if (currentOriginProvinceStats.hasArmy)
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats,currentTargetProvinceStats,currentDestProvinceStats,0))
             {
-                currentUnitType = "A";
-            }
-            else if (currentOriginProvinceStats.hasFleet)
-            {
-                currentUnitType = "F";
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
             else
             {
                 continue;
             }
-
-            Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
         }
         hasParsedMoves = true;
     }
@@ -84,20 +72,14 @@ public class OrderTextParser : MonoBehaviour
             currentOriginProvinceStats = orderManager.SupportMoveOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.SupportMoveTargetList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.SupportMoveDestList[i].GetComponent<ProvinceStats>();
-            if (currentOriginProvinceStats.hasArmy)
+            if (HasUnit(currentOriginProvinceStats))
             {
-                currentUnitType = "A";
-            }
-            else if (currentOriginProvinceStats.hasFleet)
-            {
-                currentUnitType = "F";
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
             else
             {
                 continue;
             }
-
-            Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
         }
         hasParsedSupportMoves = true;
     }
@@ -109,22 +91,16 @@ public class OrderTextParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.SupportOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.SupportTargetList[i].GetComponent<ProvinceStats>();
-            if (currentOriginProvinceStats.hasArmy)
+            if (HasUnit(currentOriginProvinceStats))
             {
-                currentUnitType = "A";
-            }
-            else if (currentOriginProvinceStats.hasFleet)
-            {
-                currentUnitType = "F";
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName);
             }
             else
             {
                 continue;
             }
-
-            Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName);
         }
-        hasParsedMoves = true;
+        hasParsedSupports = true;
     }
     public void ParseConvoyOrders()
     {
@@ -135,22 +111,74 @@ public class OrderTextParser : MonoBehaviour
             currentOriginProvinceStats = orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>();
-            if (currentOriginProvinceStats.hasArmy)
+            if (HasUnit(currentOriginProvinceStats))
             {
-                currentUnitType = "A";
-            }
-            else if (currentOriginProvinceStats.hasFleet)
-            {
-                currentUnitType = "F";
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " C " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
             else
             {
                 continue;
             }
-
-            Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " C " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
         }
-        hasParsedSupportMoves = true;
+        hasParsedConvoys = true;
+    }
+    public bool HasUnit(ProvinceStats current)
+    {
+        if (current.hasArmy)
+        {
+            currentUnitType = "A";
+            return true;
+        }
+        else if (current.hasFleet)
+        {
+            currentUnitType = "F";
+            return true;
+        }
+        else
+        {
+            Debug.Log("Order Failed - No Unit");
+            return false;
+        }
+    }
+    public bool AdjacencyCheck(ProvinceStats origin, ProvinceStats target, ProvinceStats dest, int orderType)
+    {
+        //move = 0, support move = 1, support = 2, convoy = 3
+        bool hasFoundAdjacency = false;
+        switch (orderType)
+        {
+            case 0:
+                if (currentUnitType == "A")
+                {
+                    for (int i = 0; i < origin.provinceData.adjacentProvinces.Count; i++)
+                    {
+                        if (origin.provinceData.adjacentProvinces[i].provinceName == dest.provinceData.provinceName)
+                        {
+                            hasFoundAdjacency = true;
+                        }
+                    }
+                }
+                else 
+                {
+                    for (int i = 0; i < origin.provinceData.coastlineAdjacentProvinces.Count; i++)
+                    {
+                        if (origin.provinceData.coastlineAdjacentProvinces[i].provinceName == dest.provinceData.provinceName)
+                        {
+                            hasFoundAdjacency = true;
+                        }
+                    }
+                }
+                    break;
+            case 1:
+
+                break;
+            case 2:
+
+                break;
+            case 3:
+
+                break;
+        }
+        return hasFoundAdjacency;
     }
     IEnumerator ParsedChecker()
     {

@@ -18,8 +18,14 @@ MonoBehaviour:
   isCoastal: 1
   isSupply: 1
   isFleetOnly: 0
+  hasStartingArmy: 0
+  hasStartingFleet: 0
   adjacentProvinces:
   - {fileID: 11400000, guid: d2ed0e4884ccbcb4a938ef3b57b3bf56, type: 2}
   - {fileID: 11400000, guid: b86febf827b9fd04489597a7afb590c6, type: 2}
+  - {fileID: 11400000, guid: 050297efa768b90469221b0f97fc7d31, type: 2}
+  - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}
+  childProvinces: []
+  coastlineAdjacentProvinces:
   - {fileID: 11400000, guid: 050297efa768b90469221b0f97fc7d31, type: 2}
   - {fileID: 11400000, guid: d3dc2d279d60e9242b4a677152b94109, type: 2}

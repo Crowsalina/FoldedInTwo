@@ -28,6 +28,7 @@ public class ProvinceStats : MonoBehaviour
         if (provinceData.hasStartingArmy)
         {
             army.gameObject.SetActive(true);
+            hasArmy = true;
         }
         else
         {
@@ -36,6 +37,7 @@ public class ProvinceStats : MonoBehaviour
         if (provinceData.hasStartingFleet)
         {
             fleet.gameObject.SetActive(true);
+            hasFleet = true;
         }
         else
         {
