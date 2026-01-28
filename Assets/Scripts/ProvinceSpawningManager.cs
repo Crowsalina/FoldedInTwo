@@ -11,7 +11,6 @@ public class ProvinceSpawningManager : MonoBehaviour
     [SerializeField]
     private Transform ProvinceHandler;
     List<GameObject> spawnLocations = new List<GameObject>();
-
     private void Start()
     {
         Province[] provinces = Resources.LoadAll<Province>("Provinces").OrderBy(go => go.provinceName).ToArray();
@@ -21,9 +20,9 @@ public class ProvinceSpawningManager : MonoBehaviour
     }
     public void SpawnAllProvinces()
     {
-        Debug.Log(allProvinces.Count.ToString() + " - " + spawnLocations.Count.ToString());
         for (int i = 0; i < allProvinces.Count; i++)
         {
+            BREAKOUT.Check();
             SpawnProvince(allProvinces[i], spawnLocations[i]);
         }
     }

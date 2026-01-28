@@ -1,6 +1,7 @@
 using Crowsalina;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 public class LocalOrderHandler : MonoBehaviour
 {
@@ -17,7 +18,6 @@ public class LocalOrderHandler : MonoBehaviour
     public void TrackProvinceMove(GameObject province)
     {
         orderManager.AddMoveOrder(currentOriginProvince, province);
-        currentOriginProvince.GetComponent<ProvinceButtonManager>().isProvinceClicked = false;
         ClearTracking();
     }
     public void TrackProvinceSupport(GameObject province)
@@ -33,8 +33,16 @@ public class LocalOrderHandler : MonoBehaviour
         }
         else
         {
-            orderManager.AddSupportMoveOrder(currentOriginProvince, currentTargetProvince, province);
-            ClearTracking();
+            if (province.GetComponent<ProvinceStats>().provinceData.provinceName == currentTargetProvince.GetComponent<ProvinceStats>().provinceData.provinceName)
+            {
+                TrackProvinceSupport(province);
+                ClearTracking();
+            }
+            else
+            {
+                orderManager.AddSupportMoveOrder(currentOriginProvince, currentTargetProvince, province);
+                ClearTracking();
+            }
         }
     }
     public void TrackProvinceConvoy(GameObject province)
@@ -50,12 +58,22 @@ public class LocalOrderHandler : MonoBehaviour
         }
     }
     public void TrackOriginProvince(GameObject province)
-    { 
+    {
         currentOriginProvince = province;
     }
     public void ClearTracking()
     {
-        currentOriginProvince.GetComponent<ProvinceButtonManager>().isProvinceClicked = false;
+        try
+        {
+            currentOriginProvince.GetComponent<ProvinceButtonManager>().isProvinceClicked = false;
+        }
+        catch 
+        {
+
+        }
+        isConvoyOrderActive = false;
+        isSupportOrderActive = false;
+        isMovementOpen = false;
         currentOriginProvince = null;
         currentDestProvince = null;
         currentTargetProvince = null;

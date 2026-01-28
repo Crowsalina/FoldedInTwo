@@ -17,6 +17,20 @@ public class ProvinceButtonManager : MonoBehaviour
         localOrderHandler = FindFirstObjectByType<LocalOrderHandler>();
         isProvinceClicked = false;
     }
+    private void Update()
+    {
+        if (isProvinceClicked)
+        {
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                SupportOrder();
+            }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                ConvoyOrder();
+            }
+        }
+    }
     public void ButtonPressed()
     {
         if (canButtonBePressed)
@@ -24,11 +38,7 @@ public class ProvinceButtonManager : MonoBehaviour
             if (isProvinceClicked && !localOrderHandler.isSupportOrderActive)
             {
                 HoldOrder();
-                isProvinceClicked = false;
-            }
-            else if (isProvinceClicked && localOrderHandler.isSupportOrderActive)
-            {
-                localOrderHandler.TrackProvinceSupport(this.gameObject);
+                localOrderHandler.ClearTracking();
                 isProvinceClicked = false;
             }
             else
@@ -58,17 +68,6 @@ public class ProvinceButtonManager : MonoBehaviour
     public void OrderOptions()
     {
         localOrderHandler.isMovementOpen = true;
-        while (isProvinceClicked)
-        {
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                SupportOrder();
-            }
-            if (Input.GetKeyDown(KeyCode.C))
-            { 
-                ConvoyOrder();
-            }
-        }
     }
     public void HoldOrder()
     {
@@ -81,6 +80,7 @@ public class ProvinceButtonManager : MonoBehaviour
             localOrderHandler.isConvoyOrderActive = false;
         }
         localOrderHandler.isSupportOrderActive = true;
+        Debug.Log("Support active");
     }
     public void ConvoyOrder()
     {
@@ -89,5 +89,6 @@ public class ProvinceButtonManager : MonoBehaviour
             localOrderHandler.isSupportOrderActive = false;
         }
         localOrderHandler.isConvoyOrderActive = true;
+        Debug.Log("Convoy active");
     }
 }
