@@ -3306,7 +3306,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1768083412}
   m_Layer: 5
-  m_Name: LIV
+  m_Name: LVP
   m_TagString: SpawnLocation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

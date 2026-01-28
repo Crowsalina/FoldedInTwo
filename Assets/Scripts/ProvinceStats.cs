@@ -12,10 +12,35 @@ public class ProvinceStats : MonoBehaviour
     public int controllingPower;
     public Color iconColour, buttonColour;
     public Image army, fleet, supply, buttonImage;
+    public GameObject supplyIcon;
     public TextMeshProUGUI nameText;
     void Start()
     {
         controllingPower = provinceData.startingPower;
+        if (provinceData.isSupply)
+        {
+            supplyIcon.gameObject.SetActive(true);
+        }
+        else
+        {
+            supplyIcon.gameObject.SetActive(false);
+        }
+        if (provinceData.hasStartingArmy)
+        {
+            army.gameObject.SetActive(true);
+        }
+        else
+        {
+            army.gameObject.SetActive(false);
+        }
+        if (provinceData.hasStartingFleet)
+        {
+            fleet.gameObject.SetActive(true);
+        }
+        else
+        {
+            fleet.gameObject.SetActive(false);
+        }
         UpdateProvinceStats();
     }
     public void UpdateProvinceStats()
@@ -63,15 +88,10 @@ public class ProvinceStats : MonoBehaviour
                 buttonColour = new Color(1, 0.969f, 0.518f, 1);
                 break;
         }
-
         buttonImage.color = buttonColour;
         army.color = iconColour;
         fleet.color = iconColour;
         supply.color = iconColour;
-        if (provinceData.isSupply)
-        {
-            supply.gameObject.SetActive(true);
-        }
         if (hasArmy)
         {
             army.gameObject.SetActive(true);

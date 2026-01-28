@@ -11,6 +11,7 @@ public class ProvinceButtonManager : MonoBehaviour
     
     private void Awake()
     {
+        canButtonBePressed = true;
         provinceStats = gameObject.GetComponent<ProvinceStats>();
         orderManager = FindFirstObjectByType<OrderManager>();
         localOrderHandler = FindFirstObjectByType<LocalOrderHandler>();

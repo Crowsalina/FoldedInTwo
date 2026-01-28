@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99fda78f1be6e81458084b22692c675c, type: 3}
   m_Name: LIVERPOOL
   m_EditorClassIdentifier: 
-  provinceName: LIV
+  provinceName: LVP
   startingPower: 1
   isMaritime: 0
   isCoastal: 1
   isSupply: 1
+  isFleetOnly: 0
+  hasStartingArmy: 1
+  hasStartingFleet: 0
   adjacentProvinces:
   - {fileID: 11400000, guid: f7acdd42a9141ab4186ffd68b76129d2, type: 2}
   - {fileID: 11400000, guid: 4c9a2295b336b814fa52e37b97eda479, type: 2}
@@ -24,3 +27,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd22553c251b9f149a75019ba8020331, type: 2}
   - {fileID: 11400000, guid: 1976d049646f0a340b214df4497927ed, type: 2}
   - {fileID: 11400000, guid: a754152157a34d145abfb82a1c56d70e, type: 2}
+  childProvinces: []
