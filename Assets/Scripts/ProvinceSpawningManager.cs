@@ -1,5 +1,6 @@
 using Crowsalina;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ProvinceSpawningManager : MonoBehaviour
@@ -9,15 +10,18 @@ public class ProvinceSpawningManager : MonoBehaviour
     private GameObject provincePrefab;
     [SerializeField]
     private Transform ProvinceHandler;
-    [SerializeField]
     List<GameObject> spawnLocations = new List<GameObject>();
+
     private void Start()
     {
-        Province[] provinces = Resources.LoadAll<Province>("Provinces");
+        Province[] provinces = Resources.LoadAll<Province>("Provinces").OrderBy(go => go.provinceName).ToArray();
         allProvinces.AddRange(provinces);
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("SpawnLocation").OrderBy(go => go.name).ToArray();
+        spawnLocations.AddRange(spawns);
     }
     public void SpawnAllProvinces()
     {
+        Debug.Log(allProvinces.Count.ToString() + " - " + spawnLocations.Count.ToString());
         for (int i = 0; i < allProvinces.Count; i++)
         {
             SpawnProvince(allProvinces[i], spawnLocations[i]);
