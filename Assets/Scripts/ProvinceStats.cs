@@ -98,9 +98,17 @@ public class ProvinceStats : MonoBehaviour
         {
             army.gameObject.SetActive(true);
         }
+        else
+        {
+            army.gameObject.SetActive(false);
+        }
         if (hasFleet)
         {
             fleet.gameObject.SetActive(true);
+        }
+        else
+        {
+            fleet.gameObject.SetActive(false);
         }
     }
 }

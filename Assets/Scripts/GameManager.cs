@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public int round;
     public bool canPlayerInput;
     public ProvinceSpawningManager provinceManager;
-    public OrderParser orderTextParser;
+    public OrderParser orderParser;
     public static GameManager Instance
     {
         get
@@ -38,6 +38,6 @@ public class GameManager : MonoBehaviour
     public void RoundEnd()
     {
         round += 1;
-        orderTextParser.ParseOrders();
+        orderParser.StartParsingOrders();
     }
 }

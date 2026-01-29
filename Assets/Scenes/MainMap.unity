@@ -1719,6 +1719,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d54e1fcdbaf861b4b8dddb0ddd9eb8bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dislodgeDest: {fileID: 0}
+  isDislodgeActive: 0
 --- !u!114 &857015007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3708,7 +3710,7 @@ MonoBehaviour:
   round: 0
   canPlayerInput: 0
   provinceManager: {fileID: 1874846033}
-  orderTextParser: {fileID: 857015006}
+  orderParser: {fileID: 857015006}
 --- !u!1 &1954697584
 GameObject:
   m_ObjectHideFlags: 0

@@ -39,8 +39,7 @@ public class ProvinceButtonManager : MonoBehaviour
         {
             if (orderParser.isDislodgeActive) //put more stuff here
             {
-                orderParser.dislodgeDest = this.gameObject;
-                orderParser.isDislodgeActive = false;
+                orderParser.DislodgeUnit(this.gameObject);
             }
             else
             {

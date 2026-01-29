@@ -1,7 +1,10 @@
 using Crowsalina;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class OrderParser : MonoBehaviour
 {
@@ -9,8 +12,9 @@ public class OrderParser : MonoBehaviour
     private ProvinceStats currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats;
     public GameObject dislodgeDest;
     private string currentUnitType;
-    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen;
+    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen, dislodgeInput, disbandInput;
     public bool isDislodgeActive = false;
+    List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
     private void Start()
     {
         orderManager = FindFirstObjectByType<OrderManager>();
@@ -19,15 +23,31 @@ public class OrderParser : MonoBehaviour
         hasParsedSupportMoves = false;
         hasParsedSupports = false;
         hasParsedConvoys = false;
+        hasChosen = true;
     }
-    public void ParseOrders()
+    public void StartParsingOrders()
     {
+        StartCoroutine(ParseOrders());
+    }
+    IEnumerator ParseOrders()
+    {
+
+        ProvinceStats[] provinces = ProvinceStats.FindObjectsByType<ProvinceStats>(FindObjectsSortMode.None);
+        provincesInScene.AddRange(provinces);
         ParseHoldOrders();
-        ParseMoveOrders();
-        ParseSupportMoveOrders();
-        ParseSupportOrders();
-        ParseConvoyOrders();
-        StartCoroutine(ParsedChecker());
+        StartCoroutine(ParseMoveOrders());
+        while (true)
+        {
+            if (hasChosen)
+            {
+                ParseSupportMoveOrders();
+                ParseSupportOrders();
+                ParseConvoyOrders();
+                StartCoroutine(ParsedChecker());
+                break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
     public void ParseHoldOrders()
     {
@@ -47,7 +67,7 @@ public class OrderParser : MonoBehaviour
         }
         hasParsedHolds = true;
     }
-    public void ParseMoveOrders()
+    IEnumerator ParseMoveOrders()
     {
         Debug.Log("Move Orders: " + orderManager.MoveOriginList.Count.ToString());
         for (int i = 0; i < orderManager.MoveOriginList.Count; i++)
@@ -58,17 +78,32 @@ public class OrderParser : MonoBehaviour
             if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 0) && StandoffChecker(currentOriginProvinceStats, currentDestProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
-                if(currentDestProvinceStats.hasArmy || currentDestProvinceStats.hasFleet)
+                if (currentDestProvinceStats.hasArmy || currentDestProvinceStats.hasFleet)
                 {
-                    Debug.Log("");
-                    StartCoroutine(DislodgeOrDisband());
+                    Debug.Log("D - Dislodge\nX - Disband");
                     hasChosen = false;
-                    while (hasChosen == false)
+                    StartCoroutine(DislodgeOrDisband());
+                    while (true)
                     {
-                        
+                        if (hasChosen)
+                        {
+                            if (currentUnitType == "A")
+                            {
+                                currentOriginProvinceStats.hasArmy = false;
+                                currentDestProvinceStats.hasArmy = true;
+                            }
+                            else
+                            {
+                                currentOriginProvinceStats.hasFleet = false;
+                                currentDestProvinceStats.hasFleet = true;
+                            }
+                            currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
+                            break;
+                        }
+                        yield return new WaitForSeconds(0.1f);
                     }
                 }
-                else 
+                else
                 {
                     if (currentUnitType == "A")
                     {
@@ -255,7 +290,7 @@ public class OrderParser : MonoBehaviour
                 }
             }
         }
-        if(!hasFoundAdjacency)
+        if (!hasFoundAdjacency)
         {
             Debug.Log("Order Failed - missing adjacency");
         }
@@ -315,13 +350,13 @@ public class OrderParser : MonoBehaviour
                         }
                     }
                 }
-                else 
+                else
                 {
                     noSupportOrders = true;
                 }
             }
         }
-        else 
+        else
         {
             noSupportOrders = true;
         }
@@ -379,17 +414,34 @@ public class OrderParser : MonoBehaviour
         }
         return hasWonStandoff;
     }
+    private void Update()
+    {
+        if (hasChosen == false)
+        {
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                dislodgeInput = true;
+            }
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                disbandInput = true;
+            }
+        }
+    }
     IEnumerator DislodgeOrDisband()
     {
         while (hasChosen == false)
         {
-            if (Input.GetKeyDown(KeyCode.M))
+            BREAKOUT.Check();
+            if (dislodgeInput)
             {
                 Debug.Log("Select Adjacent Province for dislodged unit");
                 isDislodgeActive = true;
+                dislodgeInput = false;
             }
-            if (Input.GetKeyDown(KeyCode.X))
+            if (disbandInput)
             {
+                disbandInput = false;
                 currentDestProvinceStats.hasArmy = false;
                 currentDestProvinceStats.hasFleet = false;
                 if (currentUnitType == "A")
@@ -407,22 +459,29 @@ public class OrderParser : MonoBehaviour
             }
             while (isDislodgeActive)
             {
+                BREAKOUT.Check();
                 yield return new WaitForSeconds(0.5f);
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.1f);
         }
     }
-    public void DislodgeUnit()
+    public void DislodgeUnit(GameObject dest)
     {
-        currentDestProvinceStats.hasArmy = false;
-        currentDestProvinceStats.hasFleet = false;
-        if (currentUnitType == "A")
+        if (AdjacencyCheck(currentDestProvinceStats, null, dest.GetComponent<ProvinceStats>(), 0))
         {
-            dislodgeDest.GetComponent<ProvinceStats>().hasArmy = true;
-        }
-        else
-        {
-            dislodgeDest.GetComponent<ProvinceStats>().hasFleet = true;
+            currentDestProvinceStats.hasArmy = false;
+            currentDestProvinceStats.hasFleet = false;
+            if (currentUnitType == "A")
+            {
+                dest.GetComponent<ProvinceStats>().hasArmy = true;
+            }
+            else
+            {
+                dest.GetComponent<ProvinceStats>().hasFleet = true;
+            }
+            dest.GetComponent<ProvinceStats>().controllingPower = currentDestProvinceStats.controllingPower;
+            isDislodgeActive = false;
+            hasChosen = true;
         }
     }
     IEnumerator ParsedChecker()
@@ -434,8 +493,16 @@ public class OrderParser : MonoBehaviour
             if (hasParsedHolds && hasParsedMoves && hasParsedSupportMoves && hasParsedSupports && hasParsedConvoys)
             {
                 orderManager.ClearOrders();
+                UpdateAllProvinces();
                 break;
             }
+        }
+    }
+    public void UpdateAllProvinces()
+    {
+        for (int i = 0; i < provincesInScene.Count; i++)
+        {
+            provincesInScene[i].UpdateProvinceStats();
         }
     }
 }
