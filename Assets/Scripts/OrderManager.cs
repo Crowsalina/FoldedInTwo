@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class OrderManager : MonoBehaviour
 {
+    #region ListDeclarations
     public List<GameObject> MoveOriginList = new List<GameObject>();
     public List<GameObject> MoveDestList = new List<GameObject>();
     public List<GameObject> HoldList = new List<GameObject>();
@@ -15,6 +16,7 @@ public class OrderManager : MonoBehaviour
     public List<GameObject> ConvoyOriginList = new List<GameObject>();
     public List<GameObject> ConvoyTargetList = new List<GameObject>();
     public List<GameObject> ConvoyDestList = new List<GameObject>();
+    #endregion
     public void AddHoldOrder(GameObject originProvince)
     { 
         HoldList.Add(originProvince);
