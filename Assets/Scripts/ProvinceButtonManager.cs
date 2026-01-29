@@ -8,6 +8,7 @@ public class ProvinceButtonManager : MonoBehaviour
     public GameObject destinationProvince, supportingProvince;
     private OrderManager orderManager;
     private LocalOrderHandler localOrderHandler;
+    private OrderParser orderParser;
     
     private void Awake()
     {
@@ -15,6 +16,7 @@ public class ProvinceButtonManager : MonoBehaviour
         provinceStats = gameObject.GetComponent<ProvinceStats>();
         orderManager = FindFirstObjectByType<OrderManager>();
         localOrderHandler = FindFirstObjectByType<LocalOrderHandler>();
+        orderParser = FindFirstObjectByType<OrderParser>();
         isProvinceClicked = false;
     }
     private void Update()
@@ -35,32 +37,40 @@ public class ProvinceButtonManager : MonoBehaviour
     {
         if (canButtonBePressed)
         {
-            if (isProvinceClicked && !localOrderHandler.isSupportOrderActive)
+            if (orderParser.isDislodgeActive) //put more stuff here
             {
-                HoldOrder();
-                localOrderHandler.ClearTracking();
-                isProvinceClicked = false;
+                orderParser.dislodgeDest = this.gameObject;
+                orderParser.isDislodgeActive = false;
             }
             else
             {
-                if (localOrderHandler.isMovementOpen && !localOrderHandler.isConvoyOrderActive && !localOrderHandler.isSupportOrderActive)
+                if (isProvinceClicked && !localOrderHandler.isSupportOrderActive)
                 {
-                    localOrderHandler.TrackProvinceMove(this.gameObject);
+                    HoldOrder();
+                    localOrderHandler.ClearTracking();
                     isProvinceClicked = false;
-                }
-                else if (localOrderHandler.isMovementOpen && localOrderHandler.isConvoyOrderActive)
-                {
-                    localOrderHandler.TrackProvinceConvoy(this.gameObject);
-                }
-                else if (localOrderHandler.isMovementOpen && localOrderHandler.isSupportOrderActive)
-                {
-                    localOrderHandler.TrackProvinceSupportMove(this.gameObject);
                 }
                 else
                 {
-                    isProvinceClicked = true;
-                    localOrderHandler.TrackOriginProvince(this.gameObject);
-                    OrderOptions();
+                    if (localOrderHandler.isMovementOpen && !localOrderHandler.isConvoyOrderActive && !localOrderHandler.isSupportOrderActive)
+                    {
+                        localOrderHandler.TrackProvinceMove(this.gameObject);
+                        isProvinceClicked = false;
+                    }
+                    else if (localOrderHandler.isMovementOpen && localOrderHandler.isConvoyOrderActive)
+                    {
+                        localOrderHandler.TrackProvinceConvoy(this.gameObject);
+                    }
+                    else if (localOrderHandler.isMovementOpen && localOrderHandler.isSupportOrderActive)
+                    {
+                        localOrderHandler.TrackProvinceSupportMove(this.gameObject);
+                    }
+                    else
+                    {
+                        isProvinceClicked = true;
+                        localOrderHandler.TrackOriginProvince(this.gameObject);
+                        OrderOptions();
+                    }
                 }
             }
         }

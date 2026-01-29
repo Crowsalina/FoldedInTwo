@@ -7,8 +7,10 @@ public class OrderParser : MonoBehaviour
 {
     private OrderManager orderManager;
     private ProvinceStats currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats;
+    public GameObject dislodgeDest;
     private string currentUnitType;
-    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys;
+    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen;
+    public bool isDislodgeActive = false;
     private void Start()
     {
         orderManager = FindFirstObjectByType<OrderManager>();
@@ -56,6 +58,30 @@ public class OrderParser : MonoBehaviour
             if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 0) && StandoffChecker(currentOriginProvinceStats, currentDestProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
+                if(currentDestProvinceStats.hasArmy || currentDestProvinceStats.hasFleet)
+                {
+                    Debug.Log("");
+                    StartCoroutine(DislodgeOrDisband());
+                    hasChosen = false;
+                    while (hasChosen == false)
+                    {
+                        
+                    }
+                }
+                else 
+                {
+                    if (currentUnitType == "A")
+                    {
+                        currentOriginProvinceStats.hasArmy = false;
+                        currentDestProvinceStats.hasArmy = true;
+                    }
+                    else
+                    {
+                        currentOriginProvinceStats.hasFleet = false;
+                        currentDestProvinceStats.hasFleet = true;
+                    }
+                    currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
+                }
             }
             else
             {
@@ -352,6 +378,52 @@ public class OrderParser : MonoBehaviour
             hasWonStandoff = true;
         }
         return hasWonStandoff;
+    }
+    IEnumerator DislodgeOrDisband()
+    {
+        while (hasChosen == false)
+        {
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                Debug.Log("Select Adjacent Province for dislodged unit");
+                isDislodgeActive = true;
+            }
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                currentDestProvinceStats.hasArmy = false;
+                currentDestProvinceStats.hasFleet = false;
+                if (currentUnitType == "A")
+                {
+                    currentOriginProvinceStats.hasArmy = false;
+                    currentDestProvinceStats.hasArmy = true;
+                }
+                else
+                {
+                    currentOriginProvinceStats.hasFleet = false;
+                    currentDestProvinceStats.hasFleet = true;
+                }
+                currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
+                hasChosen = true;
+            }
+            while (isDislodgeActive)
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+    public void DislodgeUnit()
+    {
+        currentDestProvinceStats.hasArmy = false;
+        currentDestProvinceStats.hasFleet = false;
+        if (currentUnitType == "A")
+        {
+            dislodgeDest.GetComponent<ProvinceStats>().hasArmy = true;
+        }
+        else
+        {
+            dislodgeDest.GetComponent<ProvinceStats>().hasFleet = true;
+        }
     }
     IEnumerator ParsedChecker()
     {
