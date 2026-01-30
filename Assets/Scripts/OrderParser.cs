@@ -19,7 +19,7 @@ public class OrderParser : MonoBehaviour
     private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen, dislodgeInput, disbandInput, fleetInput, armyInput;
     public bool isDislodgeActive = false;
     public bool isUnitChoiceActive = false;
-    private List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
+    public List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
     #region UnusedSupplies
     public List<ProvinceStats> OwnedSupplies1 = new List<ProvinceStats>();
     public List<ProvinceStats> OwnedSupplies2 = new List<ProvinceStats>();
@@ -55,9 +55,11 @@ public class OrderParser : MonoBehaviour
     }
     IEnumerator ParseOrders()
     {
-
-        ProvinceStats[] provinces = ProvinceStats.FindObjectsByType<ProvinceStats>(FindObjectsSortMode.None);
-        provincesInScene.AddRange(provinces);
+        if (provincesInScene.Count == 0)
+        {
+            ProvinceStats[] provinces = ProvinceStats.FindObjectsByType<ProvinceStats>(FindObjectsSortMode.None);
+            provincesInScene.AddRange(provinces);
+        }
         ParseHoldOrders();
         StartCoroutine(ParseMoveOrders());
         while (true)
@@ -817,7 +819,7 @@ public class OrderParser : MonoBehaviour
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal == false)
         {
-            Debug.Log("Cannot place Fleet inland, try again at a coast");
+            Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal)
         {

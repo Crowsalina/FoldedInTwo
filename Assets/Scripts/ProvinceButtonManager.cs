@@ -45,8 +45,26 @@ public class ProvinceButtonManager : MonoBehaviour
             }
             else if (yearManager.currentSeason == 2)
             {
-                if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply && this.gameObject.GetComponent<ProvinceStats>().hasArmy == false && this.gameObject.GetComponent<ProvinceStats>().hasFleet == false && this.gameObject.GetComponent<ProvinceStats>().controllingPower != 0)
+                if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply && this.gameObject.GetComponent<ProvinceStats>().hasArmy == false && this.gameObject.GetComponent<ProvinceStats>().hasFleet == false && this.gameObject.GetComponent<ProvinceStats>().controllingPower != 0 && this.gameObject.GetComponent<ProvinceStats>().provinceData.childProvinces.Count == 0)
                 {
+                    orderParser.PlaceUnits(this.gameObject.GetComponent<ProvinceStats>());
+                }
+                else if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply && this.gameObject.GetComponent<ProvinceStats>().hasArmy == false && this.gameObject.GetComponent<ProvinceStats>().hasFleet == false && this.gameObject.GetComponent<ProvinceStats>().controllingPower != 0 && this.gameObject.GetComponent<ProvinceStats>().provinceData.childProvinces.Count > 0)
+                {
+                    for (int i = 0; i < this.gameObject.GetComponent<ProvinceStats>().provinceData.childProvinces.Count; i++)
+                    {
+                        for (int j = 0; j < orderParser.provincesInScene.Count; j++)
+                        {
+                            if (orderParser.provincesInScene[j].provinceData.provinceName == this.gameObject.GetComponent<ProvinceStats>().provinceData.childProvinces[i].provinceName)
+                            {
+                                if (orderParser.provincesInScene[j].hasArmy || orderParser.provincesInScene[j].hasFleet)
+                                {
+                                    Debug.Log("This province cannot have a unit placed on it");
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     orderParser.PlaceUnits(this.gameObject.GetComponent<ProvinceStats>());
                 }
                 else
