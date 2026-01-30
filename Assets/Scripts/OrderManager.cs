@@ -24,6 +24,12 @@ public class OrderManager : MonoBehaviour
     }
     public void AddMoveOrder(GameObject originProvince, GameObject destProvince)
     {
+        if(MoveOriginList.Contains(originProvince))
+        {
+            Debug.Log("Removed last order for: " + originProvince.GetComponent<ProvinceStats>().provinceData.provinceName);
+            MoveDestList.RemoveAt(MoveOriginList.IndexOf(originProvince));
+            MoveOriginList.RemoveAt(MoveOriginList.IndexOf(originProvince));
+        }
         MoveOriginList.Add(originProvince);
         MoveDestList.Add(destProvince);
         Debug.Log("Successfully added move order between " + originProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString() + " + " + destProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString());
@@ -46,7 +52,7 @@ public class OrderManager : MonoBehaviour
         ConvoyOriginList.Add(originProvince);
         ConvoyDestList.Add(destProvince);
         ConvoyTargetList.Add(targetProvince);
-        Debug.Log("Successfully added convoy order between " + originProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString() + " + " + targetProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString() + " to " + destProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString());
+        Debug.Log("Successfully added convoy order by fleet " + originProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString() + " sending " + targetProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString() + " to " + destProvince.GetComponent<ProvinceStats>().provinceData.provinceName.ToString());
     }
     public void ClearOrders()
     { 
@@ -72,6 +78,5 @@ public class OrderManager : MonoBehaviour
         ConvoyTargetList.TrimExcess();
         ConvoyDestList.Clear();
         ConvoyDestList.TrimExcess();
-        Debug.Log("Cleared Last Orders");
     }
 }

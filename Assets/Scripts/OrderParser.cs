@@ -1,12 +1,7 @@
 using Crowsalina;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
-using static UnityEngine.GraphicsBuffer;
 
 public class OrderParser : MonoBehaviour
 {
@@ -77,7 +72,6 @@ public class OrderParser : MonoBehaviour
     }
     public void ParseHoldOrders()
     {
-        Debug.Log("Hold Orders: " + orderManager.HoldList.Count.ToString());
         for (int i = 0; i < orderManager.HoldList.Count; i++)
         {
             BREAKOUT.Check();
@@ -95,7 +89,6 @@ public class OrderParser : MonoBehaviour
     }
     IEnumerator ParseMoveOrders()
     {
-        Debug.Log("Move Orders: " + orderManager.MoveOriginList.Count.ToString());
         for (int i = 0; i < orderManager.MoveOriginList.Count; i++)
         {
             BREAKOUT.Check();
@@ -153,7 +146,6 @@ public class OrderParser : MonoBehaviour
     }
     public void ParseSupportMoveOrders()
     {
-        Debug.Log("Support Move Orders: " + orderManager.SupportMoveOriginList.Count.ToString());
         for (int i = 0; i < orderManager.SupportMoveOriginList.Count; i++)
         {
             BREAKOUT.Check();
@@ -180,7 +172,6 @@ public class OrderParser : MonoBehaviour
     }
     public void ParseSupportOrders()
     {
-        Debug.Log("Support Orders: " + orderManager.SupportOriginList.Count.ToString());
         for (int i = 0; i < orderManager.SupportOriginList.Count; i++)
         {
             BREAKOUT.Check();
@@ -199,7 +190,6 @@ public class OrderParser : MonoBehaviour
     }
     public void ParseConvoyOrders()
     {
-        Debug.Log("Convoy Orders: " + orderManager.ConvoyOriginList.Count.ToString());
         for (int i = 0; i < orderManager.ConvoyOriginList.Count; i++)
         {
             BREAKOUT.Check();
@@ -251,7 +241,6 @@ public class OrderParser : MonoBehaviour
                     }
                     else if (ConvoyMoveChecker(origin, dest))
                     {
-                        Debug.Log("Move order is Convoying");
                         hasFoundAdjacency = true;
                     }
                 }
@@ -346,7 +335,6 @@ public class OrderParser : MonoBehaviour
             {
                 if (dest.provinceData.provinceName == orderManager.MoveDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName && origin.provinceData.provinceName != orderManager.MoveOriginList[i].GetComponent<ProvinceStats>().provinceData.provinceName)
                 {
-                    Debug.Log("Standoff Detected: checking support");
                     //current origin province = origin
                     //current dest province = dest
                     //current enemy origin province = moveoriginlist[i]
@@ -354,13 +342,11 @@ public class OrderParser : MonoBehaviour
                     {
                         if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
                         {
-                            Debug.Log("Standoff Detected: This move has support: checking enemy support");
                             //current supporting province = supportmoveoriginlist[j]
                             for (int k = 0; k < orderManager.SupportMoveDestList.Count; k++)
                             {
                                 if (orderManager.SupportMoveDestList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveOriginList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName != origin.provinceData.provinceName)
                                 {
-                                    Debug.Log("Standoff Detected: enemy has support: checking supports of this moves support");
                                     //current enemy supporting province = supportmoveoriginlist[k]
                                     if (orderManager.SupportTargetList.Count > 0)
                                     {
@@ -372,7 +358,6 @@ public class OrderParser : MonoBehaviour
                                             }
                                             else
                                             {
-                                                Debug.Log("standoff is equally supported, fuck off");
                                                 return false;
                                             }
                                         }
@@ -390,7 +375,6 @@ public class OrderParser : MonoBehaviour
                 }
                 else if (dest.hasArmy || dest.hasFleet)
                 {
-                    Debug.Log("Standoff Detected: checking support");
                     //current origin province = origin
                     //current dest province = dest
                     //current enemy origin province = moveoriginlist[i]
@@ -398,13 +382,11 @@ public class OrderParser : MonoBehaviour
                     {
                         if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
                         {
-                            Debug.Log("Standoff Detected: This move has support: checking enemy support");
                             //current supporting province = supportmoveoriginlist[j]
                             for (int k = 0; k < orderManager.SupportMoveDestList.Count; k++)
                             {
                                 if (orderManager.SupportMoveDestList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveOriginList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName != origin.provinceData.provinceName)
                                 {
-                                    Debug.Log("Standoff Detected: enemy has support: checking supports of this moves support");
                                     //current enemy supporting province = supportmoveoriginlist[k]
                                     if (orderManager.SupportTargetList.Count > 0)
                                     {
@@ -416,7 +398,6 @@ public class OrderParser : MonoBehaviour
                                             }
                                             else
                                             {
-                                                Debug.Log("standoff is equally supported, fuck off");
                                                 return false;
                                             }
                                         }
@@ -450,20 +431,17 @@ public class OrderParser : MonoBehaviour
                 {
                     if (dest.provinceData.provinceName == orderManager.HoldList[i].GetComponent<ProvinceStats>().provinceData.provinceName)
                     {
-                        Debug.Log("Standoff Hold Detected: checking support");
                         //current origin province = origin
                         //current dest province = dest
                         for (int j = 0; j < orderManager.SupportMoveTargetList.Count; j++)
                         {
                             if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
                             {
-                                Debug.Log("Standoff Detected: This move has support: checking enemy support");
                                 //current supporting province = supportmoveoriginlist[j]
                                 for (int k = 0; k < orderManager.SupportTargetList.Count; k++)
                                 {
                                     if (orderManager.SupportTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
                                     {
-                                        Debug.Log("Standoff Detected: enemy supported hold, fuck off");
                                         //current enemy supporting province = supportmoveoriginlist[k]
                                         return false;
                                     }
@@ -519,7 +497,6 @@ public class OrderParser : MonoBehaviour
                     }
                 }
             }
-            Debug.Log("Move Uncontested");
             hasWonStandoff = true;
         }
         return hasWonStandoff;
@@ -814,7 +791,7 @@ public class OrderParser : MonoBehaviour
         }
         if (armyInput)
         {
-            Debug.Log("Placed Army");
+            Debug.Log("A " + placementProvince.provinceData.provinceName);
             placementProvince.hasArmy = true;
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal == false)
@@ -823,7 +800,7 @@ public class OrderParser : MonoBehaviour
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal)
         {
-            Debug.Log("Placed Fleet");
+            Debug.Log("F " + placementProvince.provinceData.provinceName);
             placementProvince.hasFleet = true;
         }
         UpdateAllProvinces();
