@@ -3643,7 +3643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e61b76ed253537459bae525385eb034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxLines: 8
+  maxLines: 16
 --- !u!4 &1747299858
 Transform:
   m_ObjectHideFlags: 0

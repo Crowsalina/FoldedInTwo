@@ -634,6 +634,20 @@ public class OrderParser : MonoBehaviour
     }
     public void CheckUnusedProvinces()
     {
+        OwnedSupplies1.Clear();
+        OwnedSupplies2.Clear();
+        OwnedSupplies3.Clear();
+        OwnedSupplies4.Clear();
+        OwnedSupplies5.Clear();
+        OwnedSupplies6.Clear();
+        OwnedSupplies7.Clear();
+        OwnedUnits1.Clear();
+        OwnedUnits2.Clear();
+        OwnedUnits3.Clear();
+        OwnedUnits4.Clear();
+        OwnedUnits5.Clear();
+        OwnedUnits6.Clear();
+        OwnedUnits7.Clear();
         for (int i = 0; i < provincesInScene.Count; i++)
         {
             if (provincesInScene[i].provinceData.isSupply && provincesInScene[i].controllingPower != 0)
@@ -666,31 +680,34 @@ public class OrderParser : MonoBehaviour
         }
         for (int i = 0; i < provincesInScene.Count; i++)
         {
-            if (provincesInScene[i].controllingPower != 0 && (provincesInScene[i].hasArmy || provincesInScene[i].hasFleet))
+            if (provincesInScene[i].controllingPower != 0)
             {
-                switch (provincesInScene[i].controllingPower)
+                if (provincesInScene[i].hasArmy || provincesInScene[i].hasFleet)
                 {
-                    case 1:
-                        OwnedUnits1.Add(provincesInScene[i]);
-                        break;
-                    case 2:
-                        OwnedUnits2.Add(provincesInScene[i]);
-                        break;
-                    case 3:
-                        OwnedUnits3.Add(provincesInScene[i]);
-                        break;
-                    case 4:
-                        OwnedUnits4.Add(provincesInScene[i]);
-                        break;
-                    case 5:
-                        OwnedUnits5.Add(provincesInScene[i]);
-                        break;
-                    case 6:
-                        OwnedUnits6.Add(provincesInScene[i]);
-                        break;
-                    case 7:
-                        OwnedUnits7.Add(provincesInScene[i]);
-                        break;
+                    switch (provincesInScene[i].controllingPower)
+                    {
+                        case 1:
+                            OwnedUnits1.Add(provincesInScene[i]);
+                            break;
+                        case 2:
+                            OwnedUnits2.Add(provincesInScene[i]);
+                            break;
+                        case 3:
+                            OwnedUnits3.Add(provincesInScene[i]);
+                            break;
+                        case 4:
+                            OwnedUnits4.Add(provincesInScene[i]);
+                            break;
+                        case 5:
+                            OwnedUnits5.Add(provincesInScene[i]);
+                            break;
+                        case 6:
+                            OwnedUnits6.Add(provincesInScene[i]);
+                            break;
+                        case 7:
+                            OwnedUnits7.Add(provincesInScene[i]);
+                            break;
+                    }
                 }
             }
         }
@@ -698,27 +715,27 @@ public class OrderParser : MonoBehaviour
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies2.Count > OwnedUnits1.Count)
+        if (OwnedSupplies2.Count > OwnedUnits2.Count)
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies3.Count > OwnedUnits1.Count)
+        if (OwnedSupplies3.Count > OwnedUnits3.Count)
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies4.Count > OwnedUnits1.Count)
+        if (OwnedSupplies4.Count > OwnedUnits4.Count)
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies5.Count > OwnedUnits1.Count)
+        if (OwnedSupplies5.Count > OwnedUnits5.Count)
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies6.Count > OwnedUnits1.Count)
+        if (OwnedSupplies6.Count > OwnedUnits6.Count)
         {
             unusedSupplyCount++;
         }
-        if (OwnedSupplies7.Count > OwnedUnits1.Count)
+        if (OwnedSupplies7.Count > OwnedUnits7.Count)
         {
             unusedSupplyCount++;
         }
