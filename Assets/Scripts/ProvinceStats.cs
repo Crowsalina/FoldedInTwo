@@ -70,7 +70,7 @@ public class ProvinceStats : MonoBehaviour
                 buttonColour = new Color(0.549f, 0.780f, 0.925f, 1);
                 break;
             case 3:
-                iconColour = Color.black;
+                iconColour = new Color(0.22f, 0.22f, 0.22f, 1);
                 buttonColour = new Color(0.43f, 0.43f, 0.43f, 1);
                 break;
             case 4:

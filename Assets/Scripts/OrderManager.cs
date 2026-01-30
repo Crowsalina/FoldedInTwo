@@ -60,6 +60,10 @@ public class OrderManager : MonoBehaviour
         SupportOriginList.TrimExcess();
         SupportTargetList.Clear();
         SupportTargetList.TrimExcess();
+        SupportMoveOriginList.Clear();
+        SupportMoveOriginList.TrimExcess();
+        SupportMoveTargetList.Clear();
+        SupportMoveTargetList.TrimExcess();
         SupportMoveDestList.Clear();
         SupportMoveDestList.TrimExcess();
         ConvoyOriginList.Clear();

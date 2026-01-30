@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public bool canPlayerInput;
     public ProvinceSpawningManager provinceManager;
     public OrderParser orderParser;
+    public YearManager yearManager;
     public static GameManager Instance
     {
         get
@@ -32,12 +33,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         round = 0;
+        yearManager.SetYearText();
         provinceManager.SpawnAllProvinces();
     }
 
     public void RoundEnd()
     {
-        round += 1;
         orderParser.StartParsingOrders();
     }
 }

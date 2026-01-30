@@ -2,22 +2,30 @@ using Crowsalina;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using static UnityEngine.GraphicsBuffer;
 
 public class OrderParser : MonoBehaviour
 {
     private OrderManager orderManager;
+    private YearManager yearManager;
+    private GameManager gameManager;
     private ProvinceStats currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats;
     public GameObject dislodgeDest;
     private string currentUnitType;
-    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen, dislodgeInput, disbandInput;
+    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen, dislodgeInput, disbandInput, fleetInput, armyInput;
     public bool isDislodgeActive = false;
-    List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
+    public bool isUnitChoiceActive = false;
+    private List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
+    public List<ProvinceStats> UnusedOwnedSupplies = new List<ProvinceStats>();
     private void Start()
     {
         orderManager = FindFirstObjectByType<OrderManager>();
+        yearManager = FindFirstObjectByType<YearManager>();
+        gameManager = FindFirstObjectByType<GameManager>();
         hasParsedHolds = false;
         hasParsedMoves = false;
         hasParsedSupportMoves = false;
@@ -133,7 +141,14 @@ public class OrderParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.SupportMoveOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.SupportMoveTargetList[i].GetComponent<ProvinceStats>();
-            currentDestProvinceStats = orderManager.SupportMoveDestList[i].GetComponent<ProvinceStats>();
+            try
+            {
+                currentDestProvinceStats = orderManager.SupportMoveDestList[i].GetComponent<ProvinceStats>();
+            }
+            catch
+            {
+
+            }
             if (HasUnit(currentOriginProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
@@ -173,7 +188,7 @@ public class OrderParser : MonoBehaviour
             currentOriginProvinceStats = orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>();
-            if (HasUnit(currentOriginProvinceStats))
+            if (HasUnit(currentOriginProvinceStats)&&ConvoyChecker(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " C " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
@@ -206,14 +221,19 @@ public class OrderParser : MonoBehaviour
     {
         //move = 0, support move = 1, support = 2, convoy = 3
         bool hasFoundAdjacency = false;
-        if (orderType == 0 || orderType == 2)
+        if (orderType == 0 || orderType == 1)
         {
             if (currentUnitType == "A")
             {
                 for (int i = 0; i < origin.provinceData.adjacentProvinces.Count; i++)
                 {
-                    if (origin.provinceData.adjacentProvinces[i].provinceName == dest.provinceData.provinceName)
+                    if (origin.provinceData.adjacentProvinces[i].provinceName == dest.provinceData.provinceName && origin.provinceData.adjacentProvinces[i].isMaritime == false && origin.provinceData.adjacentProvinces[i].isFleetOnly == false)
                     {
+                        hasFoundAdjacency = true;
+                    }
+                    else if (ConvoyMoveChecker(origin, dest))
+                    {
+                        Debug.Log("Move order is Convoying");
                         hasFoundAdjacency = true;
                     }
                 }
@@ -364,31 +384,38 @@ public class OrderParser : MonoBehaviour
         {
             for (int i = 0; i < orderManager.MoveDestList.Count; i++)
             {
-                if (dest.provinceData.provinceName == orderManager.HoldList[i].GetComponent<ProvinceStats>().provinceData.provinceName)
+                try
                 {
-                    Debug.Log("Standoff Hold Detected: checking support");
-                    //current origin province = origin
-                    //current dest province = dest
-                    for (int j = 0; j < orderManager.SupportMoveTargetList.Count; j++)
+                    if (dest.provinceData.provinceName == orderManager.HoldList[i].GetComponent<ProvinceStats>().provinceData.provinceName)
                     {
-                        if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
+                        Debug.Log("Standoff Hold Detected: checking support");
+                        //current origin province = origin
+                        //current dest province = dest
+                        for (int j = 0; j < orderManager.SupportMoveTargetList.Count; j++)
                         {
-                            Debug.Log("Standoff Detected: This move has support: checking enemy support");
-                            //current supporting province = supportmoveoriginlist[j]
-                            for (int k = 0; k < orderManager.SupportTargetList.Count; k++)
+                            if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
                             {
-                                if (orderManager.SupportTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
+                                Debug.Log("Standoff Detected: This move has support: checking enemy support");
+                                //current supporting province = supportmoveoriginlist[j]
+                                for (int k = 0; k < orderManager.SupportTargetList.Count; k++)
                                 {
-                                    Debug.Log("Standoff Detected: enemy supported hold, fuck off");
-                                    //current enemy supporting province = supportmoveoriginlist[k]
-                                    return false;
+                                    if (orderManager.SupportTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
+                                    {
+                                        Debug.Log("Standoff Detected: enemy supported hold, fuck off");
+                                        //current enemy supporting province = supportmoveoriginlist[k]
+                                        return false;
+                                    }
                                 }
+                                hasWonStandoff = hasMoreSupport;
                             }
-                            hasWonStandoff = hasMoreSupport;
                         }
                     }
+                    else
+                    {
+                        noHoldOrders = true;
+                    }
                 }
-                else
+                catch
                 {
                     noHoldOrders = true;
                 }
@@ -398,7 +425,6 @@ public class OrderParser : MonoBehaviour
         {
             noHoldOrders = true;
         }
-
         if (noHoldOrders && noSupportOrders)
         {
             for (int i = 0; i < orderManager.MoveDestList.Count; i++)
@@ -409,10 +435,60 @@ public class OrderParser : MonoBehaviour
                     return false;
                 }
             }
+            if(dest.hasArmy || dest.hasFleet)
+            {
+                Debug.Log("Order Failed - no support for invasion");
+                return false;
+            }
+            else if(dest.provinceData.childProvinces.Count > 0)
+            {
+                for (int i = 0; i < provincesInScene.Count;i++)
+                {
+                    for (int j = 0; j < dest.provinceData.childProvinces.Count; j++)
+                    {
+                        if (provincesInScene[i].provinceData.provinceName == dest.provinceData.childProvinces[j].provinceName)
+                        {
+                            if(provincesInScene[i].hasArmy|| provincesInScene[i].hasFleet)
+                            {
+                                Debug.Log("Order Failed - no support for invasion");
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
             Debug.Log("Move Uncontested");
             hasWonStandoff = true;
         }
         return hasWonStandoff;
+    }
+    public bool ConvoyMoveChecker(ProvinceStats origin, ProvinceStats dest)
+    {
+        if (orderManager.ConvoyOriginList.Count > 0)
+        {
+            for (int i = 0; i < orderManager.ConvoyOriginList.Count; i++)
+            {
+                if (orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>().provinceData.provinceName == origin.provinceData.provinceName && orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
+                {
+                    if (orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>().provinceData.isMaritime && orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>().provinceData.isCoastal && orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>().provinceData.isCoastal)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public bool ConvoyChecker(ProvinceStats origin, ProvinceStats target, ProvinceStats dest)
+    {
+        if (origin.provinceData.isMaritime && target.provinceData.isCoastal && dest.provinceData.isCoastal)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }  
     }
     private void Update()
     {
@@ -425,6 +501,19 @@ public class OrderParser : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.X))
             {
                 disbandInput = true;
+            }
+        }
+        if (isUnitChoiceActive == true)
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                armyInput = true;
+                isUnitChoiceActive = false;
+            }
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                fleetInput = true;
+                isUnitChoiceActive = false;
             }
         }
     }
@@ -460,7 +549,7 @@ public class OrderParser : MonoBehaviour
             while (isDislodgeActive)
             {
                 BREAKOUT.Check();
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.1f);
             }
             yield return new WaitForSeconds(0.1f);
         }
@@ -489,14 +578,56 @@ public class OrderParser : MonoBehaviour
         while (true)
         {
             BREAKOUT.Check();
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.1f);
             if (hasParsedHolds && hasParsedMoves && hasParsedSupportMoves && hasParsedSupports && hasParsedConvoys)
             {
                 orderManager.ClearOrders();
                 UpdateAllProvinces();
+                for (int i = 0; i < provincesInScene.Count; i++)
+                {
+                    if (provincesInScene[i].provinceData.isSupply && provincesInScene[i].controllingPower != 0 && provincesInScene[i].hasArmy == false && provincesInScene[i].hasFleet == false)
+                    {
+                        UnusedOwnedSupplies.Add(provincesInScene[i]);
+                    }
+                }
+                currentDestProvinceStats = null;
+                currentOriginProvinceStats = null;
+                currentTargetProvinceStats = null;
+                yearManager.SetYearText();
+                gameManager.round += 1;
                 break;
             }
         }
+    }
+    public void PlaceUnits(ProvinceStats placementProvince)
+    {
+        StartCoroutine(PlaceUnitsChecker(placementProvince));
+    }
+    IEnumerator PlaceUnitsChecker(ProvinceStats placementProvince)
+    {
+        isUnitChoiceActive = true;
+        Debug.Log("Choose unit type to be placed:");
+        Debug.Log("A - Army");
+        Debug.Log("F - Fleet");
+        while (isUnitChoiceActive)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (armyInput)
+        {
+            Debug.Log("Placed Army");
+            placementProvince.hasArmy = true;
+        }
+        else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+        {
+            Debug.Log("Cannot place Fleet inland, try again at a coast");
+        }
+        else if (fleetInput && placementProvince.provinceData.isCoastal)
+        {
+            Debug.Log("Placed Fleet");
+            placementProvince.hasFleet = true;
+        }
+        UpdateAllProvinces();
     }
     public void UpdateAllProvinces()
     {

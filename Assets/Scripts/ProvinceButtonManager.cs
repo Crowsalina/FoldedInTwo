@@ -9,7 +9,8 @@ public class ProvinceButtonManager : MonoBehaviour
     private OrderManager orderManager;
     private LocalOrderHandler localOrderHandler;
     private OrderParser orderParser;
-    
+    private YearManager yearManager;
+
     private void Awake()
     {
         canButtonBePressed = true;
@@ -17,6 +18,7 @@ public class ProvinceButtonManager : MonoBehaviour
         orderManager = FindFirstObjectByType<OrderManager>();
         localOrderHandler = FindFirstObjectByType<LocalOrderHandler>();
         orderParser = FindFirstObjectByType<OrderParser>();
+        yearManager = FindFirstObjectByType<YearManager>();
         isProvinceClicked = false;
     }
     private void Update()
@@ -37,9 +39,20 @@ public class ProvinceButtonManager : MonoBehaviour
     {
         if (canButtonBePressed)
         {
-            if (orderParser.isDislodgeActive) //put more stuff here
+            if (orderParser.isDislodgeActive)
             {
                 orderParser.DislodgeUnit(this.gameObject);
+            }
+            else if (yearManager.currentSeason == 2)
+            {
+                if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply)
+                {
+                    orderParser.PlaceUnits(this.gameObject.GetComponent<ProvinceStats>());
+                }
+                else
+                {
+                    Debug.Log("Not a supply you fuckhead");
+                }
             }
             else
             {
