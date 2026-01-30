@@ -110,11 +110,45 @@ public class OrderParser : MonoBehaviour
                             {
                                 currentOriginProvinceStats.hasArmy = false;
                                 currentDestProvinceStats.hasArmy = true;
+                                if (currentDestProvinceStats.provinceData.childProvinces.Count > 0)
+                                {
+                                    for (int k = 0; k < currentDestProvinceStats.provinceData.childProvinces.Count; k++)
+                                    {
+                                        for (int j = 0; j < provincesInScene.Count; j++)
+                                        {
+                                            if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.childProvinces[k].provinceName)
+                                            {
+                                                provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
                                 currentOriginProvinceStats.hasFleet = false;
                                 currentDestProvinceStats.hasFleet = true;
+                                if (currentDestProvinceStats.provinceData.parentProvince != null)
+                                {
+                                    for (int j = 0; j < provincesInScene.Count; j++)
+                                    {
+                                        if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.parentProvince.provinceName)
+                                        {
+                                            provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                            for (int k = 0; k < provincesInScene[j].provinceData.childProvinces.Count; k++)
+                                            {
+                                                for (int l = 0; l < provincesInScene.Count; l++)
+                                                {
+                                                    if (provincesInScene[l].provinceData.provinceName == provincesInScene[j].provinceData.childProvinces[k].provinceName)
+                                                    {
+                                                        provincesInScene[l].controllingPower = provincesInScene[j].controllingPower;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
                             }
                             currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
                             break;
@@ -128,11 +162,46 @@ public class OrderParser : MonoBehaviour
                     {
                         currentOriginProvinceStats.hasArmy = false;
                         currentDestProvinceStats.hasArmy = true;
+                        if (currentDestProvinceStats.provinceData.childProvinces.Count > 0)
+                        {
+                            for (int k = 0; k < currentDestProvinceStats.provinceData.childProvinces.Count; k++)
+                            {
+                                for (int j = 0; j < provincesInScene.Count; j++)
+                                {
+                                    if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.childProvinces[k].provinceName)
+                                    {
+                                        provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
                         currentOriginProvinceStats.hasFleet = false;
                         currentDestProvinceStats.hasFleet = true;
+                        if (currentDestProvinceStats.provinceData.parentProvince != null)
+                        {
+                            for (int j = 0; j < provincesInScene.Count; j++)
+                            {
+                                if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.parentProvince.provinceName)
+                                {
+                                    provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                    Debug.Log(provincesInScene[j].provinceData.provinceName + " - " + provincesInScene[j].controllingPower.ToString());
+                                    for (int k = 0; k < provincesInScene[j].provinceData.childProvinces.Count; k++)
+                                    {
+                                        for (int l = 0; l < provincesInScene.Count; l++)
+                                        {
+                                            if (provincesInScene[l].provinceData.provinceName == provincesInScene[j].provinceData.childProvinces[k].provinceName)
+                                            {
+                                                provincesInScene[l].controllingPower = provincesInScene[j].controllingPower;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
                     }
                     currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
                 }
@@ -247,19 +316,32 @@ public class OrderParser : MonoBehaviour
             }
             else
             {
-                for (int i = 0; i < origin.provinceData.coastlineAdjacentProvinces.Count; i++)
+                if (origin.provinceData.isMaritime)
                 {
-                    if (origin.provinceData.coastlineAdjacentProvinces[i].provinceName == dest.provinceData.provinceName)
+                    for (int i = 0; i < origin.provinceData.adjacentProvinces.Count; i++)
                     {
-                        hasFoundAdjacency = true;
-                    }
-                    else
-                    {
-                        for (int j = 0; j < origin.provinceData.adjacentProvinces.Count; j++)
+                        if (origin.provinceData.adjacentProvinces[i].provinceName == dest.provinceData.provinceName && dest.provinceData.childProvinces.Count == 0)
                         {
-                            if (origin.provinceData.adjacentProvinces[j].provinceName == dest.provinceData.provinceName && origin.provinceData.adjacentProvinces[j].isMaritime)
+                            hasFoundAdjacency = true;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < origin.provinceData.coastlineAdjacentProvinces.Count; i++)
+                    {
+                        if (origin.provinceData.coastlineAdjacentProvinces[i].provinceName == dest.provinceData.provinceName)
+                        {
+                            hasFoundAdjacency = true;
+                        }
+                        else
+                        {
+                            for (int j = 0; j < origin.provinceData.adjacentProvinces.Count; j++)
                             {
-                                hasFoundAdjacency = true;
+                                if (origin.provinceData.adjacentProvinces[j].provinceName == dest.provinceData.provinceName && origin.provinceData.adjacentProvinces[j].isMaritime)
+                                {
+                                    hasFoundAdjacency = true;
+                                }
                             }
                         }
                     }

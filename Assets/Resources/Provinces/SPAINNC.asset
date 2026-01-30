@@ -28,3 +28,4 @@ MonoBehaviour:
   coastlineAdjacentProvinces:
   - {fileID: 11400000, guid: 7b8675e1e88421244b2dda787af437cb, type: 2}
   - {fileID: 11400000, guid: f12585b75abc4e548a48a4b99ba83e38, type: 2}
+  parentProvince: {fileID: 11400000, guid: d2ed0e4884ccbcb4a938ef3b57b3bf56, type: 2}

@@ -4,7 +4,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public int round;
-    public bool canPlayerInput;
+    public bool canPlayerInput, isFullscreen;
     public ProvinceSpawningManager provinceManager;
     public OrderParser orderParser;
     public YearManager yearManager;
@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         round = 0;
+        isFullscreen = true;
         yearManager.SetYearText();
         provinceManager.SpawnAllProvinces();
     }
@@ -40,5 +41,17 @@ public class GameManager : MonoBehaviour
     public void RoundEnd()
     {
         orderParser.StartParsingOrders();
+    }
+    public void ToggleFullScreen()
+    {
+        if(isFullscreen)
+        {
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+        }
+        else
+        {
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+        }
+        isFullscreen = !isFullscreen;
     }
 }

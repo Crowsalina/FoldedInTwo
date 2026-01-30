@@ -12,36 +12,36 @@ public class ProvinceStats : MonoBehaviour
     public int controllingPower;
     public Color iconColour, buttonColour;
     public Image army, fleet, supply, buttonImage;
-    public GameObject supplyIcon;
+    public GameObject supplyIcon, armyIcon, fleetIcon;
     public TextMeshProUGUI nameText;
     void Start()
     {
         controllingPower = provinceData.startingPower;
         if (provinceData.isSupply)
         {
-            supplyIcon.gameObject.SetActive(true);
+            supplyIcon.SetActive(true);
         }
         else
         {
-            supplyIcon.gameObject.SetActive(false);
+            supplyIcon.SetActive(false);
         }
         if (provinceData.hasStartingArmy)
         {
-            army.gameObject.SetActive(true);
+            armyIcon.SetActive(true);
             hasArmy = true;
         }
         else
         {
-            army.gameObject.SetActive(false);
+            armyIcon.SetActive(false);
         }
         if (provinceData.hasStartingFleet)
         {
-            fleet.gameObject.SetActive(true);
+            fleetIcon.SetActive(true);
             hasFleet = true;
         }
         else
         {
-            fleet.gameObject.SetActive(false);
+            fleetIcon.SetActive(false);
         }
         UpdateProvinceStats();
     }
@@ -96,19 +96,19 @@ public class ProvinceStats : MonoBehaviour
         supply.color = iconColour;
         if (hasArmy)
         {
-            army.gameObject.SetActive(true);
+            armyIcon.SetActive(true);
         }
         else
         {
-            army.gameObject.SetActive(false);
+            armyIcon.SetActive(false);
         }
         if (hasFleet)
         {
-            fleet.gameObject.SetActive(true);
+            fleetIcon.SetActive(true);
         }
         else
         {
-            fleet.gameObject.SetActive(false);
+            fleetIcon.SetActive(false);
         }
     }
 }
