@@ -26,7 +26,7 @@ public class YearManager : MonoBehaviour
                 currentSeason = 1;
                 break;
             case 1:
-                if (orderParser.UnusedOwnedSupplies.Count > 0)
+                if (orderParser.unusedSupplyCount > 0)
                 {
                     currentSeason = 2;
                 }

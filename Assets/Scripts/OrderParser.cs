@@ -20,7 +20,23 @@ public class OrderParser : MonoBehaviour
     public bool isDislodgeActive = false;
     public bool isUnitChoiceActive = false;
     private List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
-    public List<ProvinceStats> UnusedOwnedSupplies = new List<ProvinceStats>();
+    #region UnusedSupplies
+    public List<ProvinceStats> OwnedSupplies1 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies2 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies3 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies4 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies5 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies6 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedSupplies7 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits1 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits2 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits3 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits4 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits5 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits6 = new List<ProvinceStats>();
+    public List<ProvinceStats> OwnedUnits7 = new List<ProvinceStats>();
+    public int unusedSupplyCount = 0;
+    #endregion
     private void Start()
     {
         orderManager = FindFirstObjectByType<OrderManager>();
@@ -188,7 +204,7 @@ public class OrderParser : MonoBehaviour
             currentOriginProvinceStats = orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>();
-            if (HasUnit(currentOriginProvinceStats)&&ConvoyChecker(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats))
+            if (HasUnit(currentOriginProvinceStats) && ConvoyChecker(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " C " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
@@ -221,7 +237,7 @@ public class OrderParser : MonoBehaviour
     {
         //move = 0, support move = 1, support = 2, convoy = 3
         bool hasFoundAdjacency = false;
-        if (orderType == 0 || orderType == 1)
+        if (orderType == 0 || orderType == 2)
         {
             if (currentUnitType == "A")
             {
@@ -370,6 +386,50 @@ public class OrderParser : MonoBehaviour
                         }
                     }
                 }
+                else if (dest.hasArmy || dest.hasFleet)
+                {
+                    Debug.Log("Standoff Detected: checking support");
+                    //current origin province = origin
+                    //current dest province = dest
+                    //current enemy origin province = moveoriginlist[i]
+                    for (int j = 0; j < orderManager.SupportMoveTargetList.Count; j++)
+                    {
+                        if (origin.provinceData.provinceName == orderManager.SupportMoveTargetList[j].GetComponent<ProvinceStats>().provinceData.provinceName && dest.provinceData.provinceName == orderManager.SupportMoveDestList[j].GetComponent<ProvinceStats>().provinceData.provinceName)
+                        {
+                            Debug.Log("Standoff Detected: This move has support: checking enemy support");
+                            //current supporting province = supportmoveoriginlist[j]
+                            for (int k = 0; k < orderManager.SupportMoveDestList.Count; k++)
+                            {
+                                if (orderManager.SupportMoveDestList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.MoveOriginList[i].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportMoveTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName != origin.provinceData.provinceName)
+                                {
+                                    Debug.Log("Standoff Detected: enemy has support: checking supports of this moves support");
+                                    //current enemy supporting province = supportmoveoriginlist[k]
+                                    if (orderManager.SupportTargetList.Count > 0)
+                                    {
+                                        for (int l = 0; l < orderManager.SupportTargetList.Count; l++)
+                                        {
+                                            if (orderManager.SupportTargetList[l].GetComponent<ProvinceStats>().provinceData.provinceName == orderManager.SupportMoveOriginList[j].GetComponent<ProvinceStats>().provinceData.provinceName && orderManager.SupportTargetList[l].GetComponent<ProvinceStats>().provinceData.provinceName != orderManager.SupportMoveOriginList[k].GetComponent<ProvinceStats>().provinceData.provinceName)
+                                            {
+                                                Debug.Log("Standoff Won: outputting winners move order");
+                                            }
+                                            else
+                                            {
+                                                Debug.Log("standoff is equally supported, fuck off");
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("Order Failed - Move standoff equal");
+                                        return false;
+                                    }
+                                }
+                            }
+                            hasWonStandoff = hasMoreSupport;
+                        }
+                    }
+                }
                 else
                 {
                     noSupportOrders = true;
@@ -435,20 +495,20 @@ public class OrderParser : MonoBehaviour
                     return false;
                 }
             }
-            if(dest.hasArmy || dest.hasFleet)
+            if (dest.hasArmy || dest.hasFleet)
             {
                 Debug.Log("Order Failed - no support for invasion");
                 return false;
             }
-            else if(dest.provinceData.childProvinces.Count > 0)
+            else if (dest.provinceData.childProvinces.Count > 0)
             {
-                for (int i = 0; i < provincesInScene.Count;i++)
+                for (int i = 0; i < provincesInScene.Count; i++)
                 {
                     for (int j = 0; j < dest.provinceData.childProvinces.Count; j++)
                     {
                         if (provincesInScene[i].provinceData.provinceName == dest.provinceData.childProvinces[j].provinceName)
                         {
-                            if(provincesInScene[i].hasArmy|| provincesInScene[i].hasFleet)
+                            if (provincesInScene[i].hasArmy || provincesInScene[i].hasFleet)
                             {
                                 Debug.Log("Order Failed - no support for invasion");
                                 return false;
@@ -488,7 +548,7 @@ public class OrderParser : MonoBehaviour
         else
         {
             return false;
-        }  
+        }
     }
     private void Update()
     {
@@ -583,13 +643,7 @@ public class OrderParser : MonoBehaviour
             {
                 orderManager.ClearOrders();
                 UpdateAllProvinces();
-                for (int i = 0; i < provincesInScene.Count; i++)
-                {
-                    if (provincesInScene[i].provinceData.isSupply && provincesInScene[i].controllingPower != 0 && provincesInScene[i].hasArmy == false && provincesInScene[i].hasFleet == false)
-                    {
-                        UnusedOwnedSupplies.Add(provincesInScene[i]);
-                    }
-                }
+                CheckUnusedProvinces();
                 currentDestProvinceStats = null;
                 currentOriginProvinceStats = null;
                 currentTargetProvinceStats = null;
@@ -599,12 +653,155 @@ public class OrderParser : MonoBehaviour
             }
         }
     }
+    public void CheckUnusedProvinces()
+    {
+        for (int i = 0; i < provincesInScene.Count; i++)
+        {
+            if (provincesInScene[i].provinceData.isSupply && provincesInScene[i].controllingPower != 0)
+            {
+                switch (provincesInScene[i].controllingPower)
+                {
+                    case 1:
+                        OwnedSupplies1.Add(provincesInScene[i]);
+                        break;
+                    case 2:
+                        OwnedSupplies2.Add(provincesInScene[i]);
+                        break;
+                    case 3:
+                        OwnedSupplies3.Add(provincesInScene[i]);
+                        break;
+                    case 4:
+                        OwnedSupplies4.Add(provincesInScene[i]);
+                        break;
+                    case 5:
+                        OwnedSupplies5.Add(provincesInScene[i]);
+                        break;
+                    case 6:
+                        OwnedSupplies6.Add(provincesInScene[i]);
+                        break;
+                    case 7:
+                        OwnedSupplies7.Add(provincesInScene[i]);
+                        break;
+                }
+            }
+        }
+        for (int i = 0; i < provincesInScene.Count; i++)
+        {
+            if (provincesInScene[i].controllingPower != 0 && (provincesInScene[i].hasArmy || provincesInScene[i].hasFleet))
+            {
+                switch (provincesInScene[i].controllingPower)
+                {
+                    case 1:
+                        OwnedUnits1.Add(provincesInScene[i]);
+                        break;
+                    case 2:
+                        OwnedUnits2.Add(provincesInScene[i]);
+                        break;
+                    case 3:
+                        OwnedUnits3.Add(provincesInScene[i]);
+                        break;
+                    case 4:
+                        OwnedUnits4.Add(provincesInScene[i]);
+                        break;
+                    case 5:
+                        OwnedUnits5.Add(provincesInScene[i]);
+                        break;
+                    case 6:
+                        OwnedUnits6.Add(provincesInScene[i]);
+                        break;
+                    case 7:
+                        OwnedUnits7.Add(provincesInScene[i]);
+                        break;
+                }
+            }
+        }
+        if (OwnedSupplies1.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies2.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies3.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies4.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies5.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies6.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+        if (OwnedSupplies7.Count > OwnedUnits1.Count)
+        {
+            unusedSupplyCount++;
+        }
+    }
     public void PlaceUnits(ProvinceStats placementProvince)
     {
         StartCoroutine(PlaceUnitsChecker(placementProvince));
     }
     IEnumerator PlaceUnitsChecker(ProvinceStats placementProvince)
     {
+        switch (placementProvince.controllingPower)
+        {
+            case 1:
+                if (OwnedSupplies1.Count == OwnedUnits1.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 2:
+                if (OwnedSupplies2.Count == OwnedUnits2.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 3:
+                if (OwnedSupplies3.Count == OwnedUnits3.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 4:
+                if (OwnedSupplies4.Count == OwnedUnits4.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 5:
+                if (OwnedSupplies5.Count == OwnedUnits5.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 6:
+                if (OwnedSupplies6.Count == OwnedUnits6.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+            case 7:
+                if (OwnedSupplies7.Count == OwnedUnits7.Count)
+                {
+                    Debug.Log("This power has maximum units already");
+                    yield break;
+                }
+                break;
+        }
         isUnitChoiceActive = true;
         Debug.Log("Choose unit type to be placed:");
         Debug.Log("A - Army");

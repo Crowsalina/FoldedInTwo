@@ -45,13 +45,13 @@ public class ProvinceButtonManager : MonoBehaviour
             }
             else if (yearManager.currentSeason == 2)
             {
-                if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply)
+                if (this.gameObject.GetComponent<ProvinceStats>().provinceData.isSupply && this.gameObject.GetComponent<ProvinceStats>().hasArmy == false && this.gameObject.GetComponent<ProvinceStats>().hasFleet == false && this.gameObject.GetComponent<ProvinceStats>().controllingPower != 0)
                 {
                     orderParser.PlaceUnits(this.gameObject.GetComponent<ProvinceStats>());
                 }
                 else
                 {
-                    Debug.Log("Not a supply you fuckhead");
+                    Debug.Log("This province cannot have a unit placed on it");
                 }
             }
             else
