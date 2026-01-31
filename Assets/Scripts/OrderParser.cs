@@ -2,7 +2,6 @@ using Crowsalina;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class OrderParser : MonoBehaviour
 {
     private OrderManager orderManager;
@@ -56,14 +55,14 @@ public class OrderParser : MonoBehaviour
             provincesInScene.AddRange(provinces);
         }
         ParseHoldOrders();
+        ParseSupportMoveOrders();
+        ParseSupportOrders();
+        ParseConvoyOrders();
         StartCoroutine(ParseMoveOrders());
         while (true)
         {
             if (hasChosen)
             {
-                ParseSupportMoveOrders();
-                ParseSupportOrders();
-                ParseConvoyOrders();
                 StartCoroutine(ParsedChecker());
                 break;
             }
@@ -187,7 +186,6 @@ public class OrderParser : MonoBehaviour
                                 if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.parentProvince.provinceName)
                                 {
                                     provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
-                                    Debug.Log(provincesInScene[j].provinceData.provinceName + " - " + provincesInScene[j].controllingPower.ToString());
                                     for (int k = 0; k < provincesInScene[j].provinceData.childProvinces.Count; k++)
                                     {
                                         for (int l = 0; l < provincesInScene.Count; l++)
@@ -399,10 +397,6 @@ public class OrderParser : MonoBehaviour
                 }
             }
         }
-        if (!hasFoundAdjacency)
-        {
-            Debug.Log("Order Failed - missing adjacency");
-        }
         return hasFoundAdjacency;
     }
     public bool StandoffChecker(ProvinceStats origin, ProvinceStats dest)
@@ -591,9 +585,12 @@ public class OrderParser : MonoBehaviour
             {
                 if (orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>().provinceData.provinceName == origin.provinceData.provinceName && orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
                 {
-                    if (orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>().provinceData.isMaritime && orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>().provinceData.isCoastal && orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>().provinceData.isCoastal)
+                    if (ConvoyChecker(orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>(), orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>(), orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>()))
                     {
-                        return true;
+                        if (orderManager.ConvoyOriginList[i].GetComponent<ProvinceStats>().provinceData.isMaritime && orderManager.ConvoyTargetList[i].GetComponent<ProvinceStats>().provinceData.isCoastal && orderManager.ConvoyDestList[i].GetComponent<ProvinceStats>().provinceData.isCoastal)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -602,7 +599,7 @@ public class OrderParser : MonoBehaviour
     }
     public bool ConvoyChecker(ProvinceStats origin, ProvinceStats target, ProvinceStats dest)
     {
-        if (origin.provinceData.isMaritime && target.provinceData.isCoastal && dest.provinceData.isCoastal)
+        if (origin.provinceData.isMaritime && target.provinceData.isCoastal && dest.provinceData.isCoastal && AdjacencyCheck(origin,target,dest,0) && AdjacencyCheck(target, dest, origin, 0))
         {
             return true;
         }
@@ -892,15 +889,18 @@ public class OrderParser : MonoBehaviour
         {
             Debug.Log("A " + placementProvince.provinceData.provinceName);
             placementProvince.hasArmy = true;
+            armyInput = false;
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal == false)
         {
             Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+            fleetInput = false;
         }
         else if (fleetInput && placementProvince.provinceData.isCoastal)
         {
             Debug.Log("F " + placementProvince.provinceData.provinceName);
             placementProvince.hasFleet = true;
+            fleetInput = false;
         }
         UpdateAllProvinces();
     }

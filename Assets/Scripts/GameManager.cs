@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public ProvinceSpawningManager provinceManager;
     public OrderParser orderParser;
     public YearManager yearManager;
+    public Resolution originalRes;
     public static GameManager Instance
     {
         get
@@ -16,7 +17,6 @@ public class GameManager : MonoBehaviour
         }
     }
     private static GameManager instance = null;
-
     private void Awake()
     {
         if (instance)
@@ -29,15 +29,14 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
     }
-
     private void Start()
     {
         round = 0;
         isFullscreen = true;
+        originalRes = Screen.currentResolution;
         yearManager.SetYearText();
         provinceManager.SpawnAllProvinces();
     }
-
     public void RoundEnd()
     {
         orderParser.StartParsingOrders();
@@ -46,11 +45,11 @@ public class GameManager : MonoBehaviour
     {
         if(isFullscreen)
         {
-            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
         }
         else
         {
-            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+            Screen.SetResolution(originalRes.width, originalRes.height, FullScreenMode.FullScreenWindow);
         }
         isFullscreen = !isFullscreen;
     }
