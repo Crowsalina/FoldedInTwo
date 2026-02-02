@@ -963,7 +963,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 202.79, y: -49.889}
+  m_AnchoredPosition: {x: 202.79004, y: -49.888916}
   m_SizeDelta: {x: 397.5771, y: 91.7796}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &493567624
@@ -2072,6 +2072,10 @@ MonoBehaviour:
   isDislodgeActive: 0
   isUnitChoiceActive: 0
   provincesInScene: []
+  redoMoveOriginList: []
+  redoMoveDestList: []
+  resupplyProvinces: []
+  resupplyType: 
   OwnedSupplies1: []
   OwnedSupplies2: []
   OwnedSupplies3: []
@@ -3989,7 +3993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e61b76ed253537459bae525385eb034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxLines: 16
+  maxLines: 15
 --- !u!4 &1747299858
 Transform:
   m_ObjectHideFlags: 0

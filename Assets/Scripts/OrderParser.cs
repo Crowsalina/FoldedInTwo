@@ -1,6 +1,7 @@
 using Crowsalina;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 public class OrderParser : MonoBehaviour
 {
@@ -10,10 +11,14 @@ public class OrderParser : MonoBehaviour
     private ProvinceStats currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats;
     public GameObject dislodgeDest;
     private string currentUnitType;
-    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasChosen, dislodgeInput, disbandInput, fleetInput, armyInput;
+    private bool hasParsedHolds, hasParsedMoves, hasParsedSupportMoves, hasParsedSupports, hasParsedConvoys, hasParsedResupplys, hasChosen, dislodgeInput, disbandInput, fleetInput, armyInput;
     public bool isDislodgeActive = false;
     public bool isUnitChoiceActive = false;
     public List<ProvinceStats> provincesInScene = new List<ProvinceStats>();
+    public List<GameObject> redoMoveOriginList = new List<GameObject>();
+    public List<GameObject> redoMoveDestList = new List<GameObject>();
+    public List<ProvinceStats> resupplyProvinces = new List<ProvinceStats>();
+    public List<int> resupplyType = new List<int>();
     #region UnusedSupplies
     public List<ProvinceStats> OwnedSupplies1 = new List<ProvinceStats>();
     public List<ProvinceStats> OwnedSupplies2 = new List<ProvinceStats>();
@@ -41,11 +46,48 @@ public class OrderParser : MonoBehaviour
         hasParsedSupportMoves = false;
         hasParsedSupports = false;
         hasParsedConvoys = false;
+        hasParsedResupplys = false;
         hasChosen = true;
     }
     public void StartParsingOrders()
     {
-        StartCoroutine(ParseOrders());
+        if (yearManager.currentSeason != 2)
+        {
+            StartCoroutine(ParseOrders());
+        }
+        else
+        {
+            ParseResupplyOrders();
+            StartCoroutine(ParsedChecker());
+        }
+    }
+    public void ParseResupplyOrders()
+    {
+        Debug.Log("resupply order count: " + resupplyProvinces.Count.ToString());
+        for (int i = 0; i < resupplyProvinces.Count; i++)
+        {
+            BREAKOUT.Check();
+            currentOriginProvinceStats = resupplyProvinces[i].GetComponent<ProvinceStats>();
+            if (resupplyType[i] == 3)
+            {
+                continue;
+            }
+            else
+            {
+                if (resupplyType[i] == 0)
+                {
+                    currentUnitType = "A";
+                    currentOriginProvinceStats.hasArmy = true;
+                }
+                else
+                {
+                    currentUnitType = "F";
+                    currentOriginProvinceStats.hasFleet = true;
+                }
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName);
+            }
+        }
+        hasParsedResupplys = true;
     }
     IEnumerator ParseOrders()
     {
@@ -93,6 +135,140 @@ public class OrderParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.MoveOriginList[i].GetComponent<ProvinceStats>();
             currentDestProvinceStats = orderManager.MoveDestList[i].GetComponent<ProvinceStats>();
+
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 0) && StandoffChecker(currentOriginProvinceStats, currentDestProvinceStats))
+            {
+                for (int j = 0; j < provincesInScene.Count; j++)
+                {
+                    if (currentDestProvinceStats.provinceData.provinceName == orderManager.MoveOriginList[i].GetComponent<ProvinceStats>().provinceData.provinceName)
+                    {
+                        redoMoveOriginList.Add(orderManager.MoveOriginList[i]);
+                        redoMoveDestList.Add(orderManager.MoveDestList[i]);
+                        goto Skipped;
+                    }
+                }
+                Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
+                if (currentDestProvinceStats.hasArmy || currentDestProvinceStats.hasFleet)
+                {
+                    Debug.Log("D - Dislodge\nX - Disband");
+                    hasChosen = false;
+                    StartCoroutine(DislodgeOrDisband());
+                    while (true)
+                    {
+                        if (hasChosen)
+                        {
+                            if (currentUnitType == "A")
+                            {
+                                currentOriginProvinceStats.hasArmy = false;
+                                currentDestProvinceStats.hasArmy = true;
+                                if (currentDestProvinceStats.provinceData.childProvinces.Count > 0)
+                                {
+                                    for (int k = 0; k < currentDestProvinceStats.provinceData.childProvinces.Count; k++)
+                                    {
+                                        for (int j = 0; j < provincesInScene.Count; j++)
+                                        {
+                                            if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.childProvinces[k].provinceName)
+                                            {
+                                                provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                currentOriginProvinceStats.hasFleet = false;
+                                currentDestProvinceStats.hasFleet = true;
+                                if (currentDestProvinceStats.provinceData.parentProvince != null)
+                                {
+                                    for (int j = 0; j < provincesInScene.Count; j++)
+                                    {
+                                        if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.parentProvince.provinceName)
+                                        {
+                                            provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                            for (int k = 0; k < provincesInScene[j].provinceData.childProvinces.Count; k++)
+                                            {
+                                                for (int l = 0; l < provincesInScene.Count; l++)
+                                                {
+                                                    if (provincesInScene[l].provinceData.provinceName == provincesInScene[j].provinceData.childProvinces[k].provinceName)
+                                                    {
+                                                        provincesInScene[l].controllingPower = provincesInScene[j].controllingPower;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                            currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
+                            break;
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+                else
+                {
+                    if (currentUnitType == "A")
+                    {
+                        currentOriginProvinceStats.hasArmy = false;
+                        currentDestProvinceStats.hasArmy = true;
+                        if (currentDestProvinceStats.provinceData.childProvinces.Count > 0)
+                        {
+                            for (int k = 0; k < currentDestProvinceStats.provinceData.childProvinces.Count; k++)
+                            {
+                                for (int j = 0; j < provincesInScene.Count; j++)
+                                {
+                                    if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.childProvinces[k].provinceName)
+                                    {
+                                        provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        currentOriginProvinceStats.hasFleet = false;
+                        currentDestProvinceStats.hasFleet = true;
+                        if (currentDestProvinceStats.provinceData.parentProvince != null)
+                        {
+                            for (int j = 0; j < provincesInScene.Count; j++)
+                            {
+                                if (provincesInScene[j].provinceData.provinceName == currentDestProvinceStats.provinceData.parentProvince.provinceName)
+                                {
+                                    provincesInScene[j].controllingPower = currentOriginProvinceStats.controllingPower;
+                                    for (int k = 0; k < provincesInScene[j].provinceData.childProvinces.Count; k++)
+                                    {
+                                        for (int l = 0; l < provincesInScene.Count; l++)
+                                        {
+                                            if (provincesInScene[l].provinceData.provinceName == provincesInScene[j].provinceData.childProvinces[k].provinceName)
+                                            {
+                                                provincesInScene[l].controllingPower = provincesInScene[j].controllingPower;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    currentDestProvinceStats.controllingPower = currentOriginProvinceStats.controllingPower;
+                }
+            }
+            else
+            {
+                continue;
+            }
+        Skipped:
+            continue;
+        }
+        for (int i = 0; i < redoMoveOriginList.Count; i++)
+        {
+            BREAKOUT.Check();
+            currentOriginProvinceStats = redoMoveOriginList[i].GetComponent<ProvinceStats>();
+            currentDestProvinceStats = redoMoveDestList[i].GetComponent<ProvinceStats>();
+
             if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 0) && StandoffChecker(currentOriginProvinceStats, currentDestProvinceStats))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
@@ -226,12 +402,15 @@ public class OrderParser : MonoBehaviour
             {
 
             }
-            if (HasUnit(currentOriginProvinceStats))
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 1))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
             else
             {
+                orderManager.SupportMoveOriginList.RemoveAt(i);
+                orderManager.SupportMoveTargetList.RemoveAt(i);
+                orderManager.SupportMoveDestList.RemoveAt(i);
                 continue;
             }
         }
@@ -244,12 +423,14 @@ public class OrderParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.SupportOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.SupportTargetList[i].GetComponent<ProvinceStats>();
-            if (HasUnit(currentOriginProvinceStats))
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 2))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName);
             }
             else
             {
+                orderManager.SupportOriginList.RemoveAt(i);
+                orderManager.SupportTargetList.RemoveAt(i);
                 continue;
             }
         }
@@ -269,6 +450,9 @@ public class OrderParser : MonoBehaviour
             }
             else
             {
+                orderManager.ConvoyOriginList.RemoveAt(i);
+                orderManager.ConvoyTargetList.RemoveAt(i);
+                orderManager.ConvoyDestList.RemoveAt(i);
                 continue;
             }
         }
@@ -288,7 +472,10 @@ public class OrderParser : MonoBehaviour
         }
         else
         {
-            Debug.Log("Order Failed - No Unit");
+            if (yearManager.currentSeason != 2)
+            {
+                Debug.Log("Order Failed - No Unit");
+            }
             return false;
         }
     }
@@ -296,7 +483,7 @@ public class OrderParser : MonoBehaviour
     {
         //move = 0, support move = 1, support = 2, convoy = 3
         bool hasFoundAdjacency = false;
-        if (orderType == 0 || orderType == 2)
+        if (orderType == 0 || orderType == 1)
         {
             if (currentUnitType == "A")
             {
@@ -306,7 +493,7 @@ public class OrderParser : MonoBehaviour
                     {
                         hasFoundAdjacency = true;
                     }
-                    else if (ConvoyMoveChecker(origin, dest))
+                    else if (orderType == 0 && ConvoyMoveChecker(origin, dest))
                     {
                         hasFoundAdjacency = true;
                     }
@@ -599,7 +786,7 @@ public class OrderParser : MonoBehaviour
     }
     public bool ConvoyChecker(ProvinceStats origin, ProvinceStats target, ProvinceStats dest)
     {
-        if (origin.provinceData.isMaritime && target.provinceData.isCoastal && dest.provinceData.isCoastal && AdjacencyCheck(origin,target,dest,0) && AdjacencyCheck(target, dest, origin, 0))
+        if (origin.provinceData.isMaritime && target.provinceData.isCoastal && dest.provinceData.isCoastal && AdjacencyCheck(origin, target, dest, 0) && AdjacencyCheck(target, dest, origin, 0))
         {
             return true;
         }
@@ -697,17 +884,47 @@ public class OrderParser : MonoBehaviour
         {
             BREAKOUT.Check();
             yield return new WaitForSeconds(0.1f);
-            if (hasParsedHolds && hasParsedMoves && hasParsedSupportMoves && hasParsedSupports && hasParsedConvoys)
+            if (yearManager.currentSeason != 2)
             {
-                orderManager.ClearOrders();
-                UpdateAllProvinces();
-                CheckUnusedProvinces();
-                currentDestProvinceStats = null;
-                currentOriginProvinceStats = null;
-                currentTargetProvinceStats = null;
-                yearManager.SetYearText();
-                gameManager.round += 1;
-                break;
+                if (hasParsedHolds && hasParsedMoves && hasParsedSupportMoves && hasParsedSupports && hasParsedConvoys)
+                {
+                    orderManager.ClearOrders();
+                    UpdateAllProvinces();
+                    CheckUnusedProvinces();
+                    currentDestProvinceStats = null;
+                    currentOriginProvinceStats = null;
+                    currentTargetProvinceStats = null;
+                    redoMoveDestList.Clear();
+                    redoMoveDestList.TrimExcess();
+                    redoMoveOriginList.Clear();
+                    redoMoveOriginList.TrimExcess();
+                    yearManager.SetYearText();
+                    gameManager.round += 1;
+                    break;
+                }
+            }
+            else
+            {
+                if (hasParsedResupplys)
+                {
+                    orderManager.ClearOrders();
+                    UpdateAllProvinces();
+                    CheckUnusedProvinces();
+                    currentDestProvinceStats = null;
+                    currentOriginProvinceStats = null;
+                    currentTargetProvinceStats = null;
+                    resupplyProvinces.Clear();
+                    resupplyProvinces.TrimExcess();
+                    resupplyType.Clear();
+                    resupplyType.TrimExcess();
+                    redoMoveDestList.Clear();
+                    redoMoveDestList.TrimExcess();
+                    redoMoveOriginList.Clear();
+                    redoMoveOriginList.TrimExcess();
+                    yearManager.SetYearText();
+                    gameManager.round += 1;
+                    break;
+                }
             }
         }
     }
@@ -821,86 +1038,405 @@ public class OrderParser : MonoBehaviour
     }
     public void PlaceUnits(ProvinceStats placementProvince)
     {
-        StartCoroutine(PlaceUnitsChecker(placementProvince));
+        StartCoroutine(UnitSelection(placementProvince));
     }
-    IEnumerator PlaceUnitsChecker(ProvinceStats placementProvince)
+    IEnumerator UnitSelection(ProvinceStats placementProvince)
     {
-        switch (placementProvince.controllingPower)
+        int resupplyordercount = 0;
+        for (int j = 0; j < resupplyProvinces.Count; j++)
         {
-            case 1:
-                if (OwnedSupplies1.Count == OwnedUnits1.Count)
+            for (int i = 0; i < provincesInScene.Count; i++)
+            {
+                if (resupplyProvinces[j].provinceData.provinceName == provincesInScene[i].provinceData.provinceName)
                 {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
+                    if (provincesInScene[i].controllingPower == placementProvince.controllingPower && resupplyType[j] != 3)
+                    {
+                        resupplyordercount++;
+                    }
                 }
-                break;
-            case 2:
-                if (OwnedSupplies2.Count == OwnedUnits2.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
-            case 3:
-                if (OwnedSupplies3.Count == OwnedUnits3.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
-            case 4:
-                if (OwnedSupplies4.Count == OwnedUnits4.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
-            case 5:
-                if (OwnedSupplies5.Count == OwnedUnits5.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
-            case 6:
-                if (OwnedSupplies6.Count == OwnedUnits6.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
-            case 7:
-                if (OwnedSupplies7.Count == OwnedUnits7.Count)
-                {
-                    Debug.Log("This power has maximum units already");
-                    yield break;
-                }
-                break;
+            }
         }
-        isUnitChoiceActive = true;
-        Debug.Log("Choose unit type to be placed:");
-        Debug.Log("A - Army");
-        Debug.Log("F - Fleet");
-        while (isUnitChoiceActive)
+        if (resupplyordercount > 0)
         {
-            yield return new WaitForSeconds(0.1f);
+            switch (placementProvince.controllingPower)
+            {
+                case 1:
+                    if (OwnedSupplies1.Count == OwnedUnits1.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 2:
+                    if (OwnedSupplies2.Count == OwnedUnits2.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 3:
+                    if (OwnedSupplies3.Count == OwnedUnits3.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 4:
+                    if (OwnedSupplies4.Count == OwnedUnits4.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 5:
+                    if (OwnedSupplies5.Count == OwnedUnits5.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 6:
+                    if (OwnedSupplies6.Count == OwnedUnits6.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+                case 7:
+                    if (OwnedSupplies7.Count == OwnedUnits7.Count + resupplyordercount)
+                    {
+                        Debug.Log("Replacing last order for this power");
+                        for (int i = (resupplyProvinces.Count - 1); i == 0; i--)
+                        {
+                            if (resupplyProvinces[i].controllingPower == placementProvince.controllingPower)
+                            {
+                                Debug.Log("removed " + resupplyType[i] + " resupply to " + resupplyProvinces[i].provinceData.provinceName);
+                                resupplyType[i] = 3;
+                                break;
+                            }
+                        }
+                    }
+                    isUnitChoiceActive = true;
+                    Debug.Log("Choose unit type to be placed:");
+                    Debug.Log("A - Army");
+                    Debug.Log("F - Fleet");
+                    while (isUnitChoiceActive)
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    if (armyInput)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(0);
+                        Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                        armyInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+                    {
+                        Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                        fleetInput = false;
+                    }
+                    else if (fleetInput && placementProvince.provinceData.isCoastal)
+                    {
+                        resupplyProvinces.Add(placementProvince);
+                        resupplyType.Add(1);
+                        Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                        fleetInput = false;
+                    }
+                    break;
+            }
         }
-        if (armyInput)
+        else
         {
-            Debug.Log("A " + placementProvince.provinceData.provinceName);
-            placementProvince.hasArmy = true;
-            armyInput = false;
-        }
-        else if (fleetInput && placementProvince.provinceData.isCoastal == false)
-        {
-            Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
-            fleetInput = false;
-        }
-        else if (fleetInput && placementProvince.provinceData.isCoastal)
-        {
-            Debug.Log("F " + placementProvince.provinceData.provinceName);
-            placementProvince.hasFleet = true;
-            fleetInput = false;
+            switch (placementProvince.controllingPower)
+            {
+                case 1:
+                    if (OwnedSupplies1.Count == OwnedUnits1.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 2:
+                    if (OwnedSupplies2.Count == OwnedUnits2.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 3:
+                    if (OwnedSupplies3.Count == OwnedUnits3.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 4:
+                    if (OwnedSupplies4.Count == OwnedUnits4.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 5:
+                    if (OwnedSupplies5.Count == OwnedUnits5.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 6:
+                    if (OwnedSupplies6.Count == OwnedUnits6.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+                case 7:
+                    if (OwnedSupplies7.Count == OwnedUnits7.Count)
+                    {
+                        Debug.Log("This power has maximum units already");
+                        yield break;
+                    }
+                    break;
+            }
+            isUnitChoiceActive = true;
+            Debug.Log("Choose unit type to be placed:");
+            Debug.Log("A - Army");
+            Debug.Log("F - Fleet");
+            while (isUnitChoiceActive)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+            if (armyInput)
+            {
+                resupplyProvinces.Add(placementProvince);
+                resupplyType.Add(0);
+                Debug.Log("Added army resupply to " + placementProvince.provinceData.provinceName);
+                armyInput = false;
+            }
+            else if (fleetInput && placementProvince.provinceData.isCoastal == false)
+            {
+                Debug.Log("Cannot place Fleet inland, place an army or select a coastal supply");
+                fleetInput = false;
+            }
+            else if (fleetInput && placementProvince.provinceData.isCoastal)
+            {
+                resupplyProvinces.Add(placementProvince);
+                resupplyType.Add(1);
+                Debug.Log("Added fleet resupply to " + placementProvince.provinceData.provinceName);
+                fleetInput = false;
+            }
         }
         UpdateAllProvinces();
     }
