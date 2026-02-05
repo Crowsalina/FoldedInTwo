@@ -63,7 +63,6 @@ public class OrderParser : MonoBehaviour
     }
     public void ParseResupplyOrders()
     {
-        Debug.Log("resupply order count: " + resupplyProvinces.Count.ToString());
         for (int i = 0; i < resupplyProvinces.Count; i++)
         {
             BREAKOUT.Check();
@@ -547,20 +546,23 @@ public class OrderParser : MonoBehaviour
             }
             else
             {
-                for (int i = 0; i < origin.provinceData.coastlineAdjacentProvinces.Count; i++)
+                if (target.provinceData.isMaritime || origin.provinceData.isMaritime)
                 {
-                    if (origin.provinceData.coastlineAdjacentProvinces[i].provinceName == target.provinceData.provinceName)
+                    for (int j = 0; j < origin.provinceData.adjacentProvinces.Count; j++)
                     {
-                        hasFoundAdjacency = true;
-                    }
-                    else
-                    {
-                        for (int j = 0; j < origin.provinceData.adjacentProvinces.Count; j++)
+                        if (origin.provinceData.adjacentProvinces[j].provinceName == target.provinceData.provinceName)
                         {
-                            if (origin.provinceData.adjacentProvinces[j].provinceName == target.provinceData.provinceName && origin.provinceData.adjacentProvinces[j].isMaritime)
-                            {
-                                hasFoundAdjacency = true;
-                            }
+                            hasFoundAdjacency = true;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < origin.provinceData.coastlineAdjacentProvinces.Count; i++)
+                    {
+                        if (origin.provinceData.coastlineAdjacentProvinces[i].provinceName == target.provinceData.provinceName)
+                        {
+                            hasFoundAdjacency = true;
                         }
                     }
                 }
@@ -705,7 +707,7 @@ public class OrderParser : MonoBehaviour
                                 {
                                     if (orderManager.SupportTargetList[k].GetComponent<ProvinceStats>().provinceData.provinceName == dest.provinceData.provinceName)
                                     {
-                                        //current enemy supporting province = supportmoveoriginlist[k]
+                                        //current enemy supporting province = supportoriginlist[k]
                                         return false;
                                     }
                                 }
