@@ -78,4 +78,12 @@ public class LocalOrderHandler : MonoBehaviour
         currentDestProvince = null;
         currentTargetProvince = null;
     }
+    public void SupportCall()
+    {
+        currentOriginProvince.GetComponent<ProvinceButtonManager>().SupportOrder();
+    }
+    public void ConvoyCall()
+    {
+        currentOriginProvince.GetComponent<ProvinceButtonManager>().ConvoyOrder();
+    }
 }

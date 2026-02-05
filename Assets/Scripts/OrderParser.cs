@@ -401,7 +401,7 @@ public class OrderParser : MonoBehaviour
             {
 
             }
-            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 1))
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 1) && SupportCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, true))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName + " - " + currentDestProvinceStats.provinceData.provinceName);
             }
@@ -422,7 +422,7 @@ public class OrderParser : MonoBehaviour
             BREAKOUT.Check();
             currentOriginProvinceStats = orderManager.SupportOriginList[i].GetComponent<ProvinceStats>();
             currentTargetProvinceStats = orderManager.SupportTargetList[i].GetComponent<ProvinceStats>();
-            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 2))
+            if (HasUnit(currentOriginProvinceStats) && AdjacencyCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, 2) && SupportCheck(currentOriginProvinceStats, currentTargetProvinceStats, currentDestProvinceStats, false))
             {
                 Debug.Log(currentUnitType + " " + currentOriginProvinceStats.provinceData.provinceName + " S " + currentTargetProvinceStats.provinceData.provinceName);
             }
@@ -587,6 +587,25 @@ public class OrderParser : MonoBehaviour
             }
         }
         return hasFoundAdjacency;
+    }
+    public bool SupportCheck(ProvinceStats origin, ProvinceStats target, ProvinceStats dest, bool isSupportMove)
+    {
+        bool isSupportValid = true;
+        if (isSupportMove)
+        {
+            if (origin.hasArmy && dest.provinceData.isMaritime)
+            {
+                isSupportValid = false;
+            }
+        }
+        else
+        {
+            if (origin.hasArmy && target.provinceData.isMaritime)
+            {
+                isSupportValid = false;
+            }
+        }
+        return isSupportValid;
     }
     public bool StandoffChecker(ProvinceStats origin, ProvinceStats dest)
     {
