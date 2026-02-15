@@ -1,13 +1,10 @@
 using UnityEngine;
-using Mirror;
 
-public class PlayerManager : NetworkBehaviour
+public class PlayerManager : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
-    void Update()
+    public int playerPower;
+
+    private void Awake()
     {
         
     }
